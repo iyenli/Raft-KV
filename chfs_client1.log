@@ -13,22 +13,3 @@ max_readahead=0x00020000
    max_background=0
    congestion_threshold=0
    unique: 2, success, outsize: 40
-unique: 4, opcode: LOOKUP (1), nodeid: 1, insize: 97, pid: 456
-   unique: 4, error: -2 (No such file or directory), outsize: 16
-unique: 6, opcode: CREATE (35), nodeid: 1, insize: 113, pid: 456
-extent_server: getattr 94000410453024
-	im: get_inode 756212768
-	im: inum out of range
-isfile: 94000410453024 is a dir
-getattr 0000557e2d12e420 0
-extent_server: getattr 94000410453024
-	im: get_inode 756212768
-	im: inum out of range
-isfile: 94000410453024 is a dir
-getdir 0000557e2d12e420
-extent_server: getattr 94000410453024
-	im: get_inode 756212768
-	im: inum out of range
-   getattr -> 0 0 0
-   unique: 6, success, outsize: 160
-OK: create returns.

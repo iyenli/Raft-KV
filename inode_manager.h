@@ -102,7 +102,7 @@ public:
 
     blockid_t find_block_by_index(int cursor, inode *node);
 
-    blockid_t alloc_new_block(int tol, inode *node);
+    void alloc_new_block(int tol, inode *node);
 
     uint32_t alloc_inode(uint32_t type);
 

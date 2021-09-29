@@ -33,7 +33,7 @@ block_manager::alloc_block() {
      * note: you should mark the corresponding bit in block bitmap when alloc.
      * you need to think about which block you can start to be allocated.
      */
-    for (int i = 1; i <= BLOCK_NUM; ++i) {
+    for (int i = MAXFILE; i <= BLOCK_NUM; ++i) {
         if (using_blocks[i] == 0) {
             using_blocks[i] = 1;
             return i;
@@ -48,6 +48,11 @@ block_manager::free_block(uint32_t id) {
      * your code goes here.
      * note: you should unmark the corresponding bit in the block bitmap when free.
      */
+
+    if (using_blocks[id] == 0) {
+        printf("you r write an unused block to 0.");
+        return;
+    }
 
     using_blocks[id] = 0;
     return;
@@ -98,16 +103,17 @@ inode_manager::alloc_inode(uint32_t type) {
 
     static int cursor = 0;
 
-    for(int i = 0; i < INODE_NUM; ++i){
-        cursor  = (cursor  + 1) % INODE_NUM;
-        if(cursor == 0)
+    for (int i = 0; i < INODE_NUM; ++i) {
+        cursor = (cursor + 1) % INODE_NUM;
+        if (cursor == 0)
             continue;
 
         inode_t *node = get_inode(cursor);
-        if(node != nullptr)
+        if (node != NULL)
             continue;
 
-        node = (inode_t *)malloc(sizeof(inode_t));
+        node = (inode_t *) malloc(sizeof(inode_t));
+        bzero(node, sizeof(inode_t));
         node->type = type;
         node->size = 0;
         node->ctime = time(NULL);
@@ -131,20 +137,22 @@ inode_manager::free_inode(uint32_t inum) {
      * if not, clear it, and remember to write back to disk.
      */
 
-    if (inum < 0 || inum >= INODE_NUM)
+    if (inum < 0 || inum >= INODE_NUM) {
+        printf("Problem occurs: free_inode meet a wrong inum");
         return;
+    }
 
     inode *node = get_inode(inum);
-    if(node == nullptr)
+    if (node == nullptr)
         return;
 
-    if(node->type == 0)
+    if (node->type == 0) {
+        printf("Problem occurs: try to free an unused inode");
         return;
+    }
 
     node->type = 0;
     put_inode(inum, node);
-
-    free(node);
     return;
 }
 
@@ -199,46 +207,40 @@ inode_manager::put_inode(uint32_t inum, struct inode *ino) {
 blockid_t
 inode_manager::find_block_by_index(int index, inode *node) {
 
-    if (index < 0 || index > MAXFILE)
+    if (index < 0)
         return 0;
 
-    if (node == NULL)
+    if (node == nullptr)
         return 0;
 
     if (index < NDIRECT)
         return node->blocks[index];
-    else {
+    else if ((unsigned long) index < MAXFILE) {
         char buf[BLOCK_SIZE];
         bm->read_block(node->blocks[NDIRECT], buf);
         return ((blockid_t *) buf)[index - NDIRECT];
     }
 
+    exit(0);
 }
 
-blockid_t
-inode_manager::alloc_new_block(int tol, inode *node){
+void
+inode_manager::alloc_new_block(int tol, inode *node) {
 
-    if (tol > MAXFILE || tol < 0)
-        return 0;
-
-    if (node == NULL)
-        return 0;
-
-    int block_id = bm->alloc_block();
+    if (node == nullptr)
+        return;
 
     if (tol < NDIRECT)
-        node->blocks[tol] = block_id;
-    else {
-        if(node->blocks[NDIRECT] == 0){
+        node->blocks[tol] = bm->alloc_block();
+    else if ((unsigned long) tol < MAXFILE) {
+        if (!node->blocks[NDIRECT]) {
             node->blocks[NDIRECT] = bm->alloc_block();
         }
         char buf[BLOCK_SIZE];
         bm->read_block(node->blocks[NDIRECT], buf);
-        ((blockid_t *) buf)[tol - NDIRECT] = block_id;
+        ((blockid_t *) buf)[tol - NDIRECT] = bm->alloc_block();
         bm->write_block(node->blocks[NDIRECT], buf);
     }
-
-    return block_id;
 }
 
 /* Get all the data of a file by inum. 
@@ -252,11 +254,11 @@ inode_manager::read_file(uint32_t inum, char **buf_out, int *size) {
      */
 
     inode *node = get_inode(inum);
-    if (node == NULL)
+    if (node == nullptr)
         return;
 
     //  We can' handle larger size.
-    if (node->size > BLOCK_SIZE * MAXFILE)
+    if (node->size >= BLOCK_SIZE * MAXFILE)
         return;
 
     *size = node->size;
@@ -274,7 +276,7 @@ inode_manager::read_file(uint32_t inum, char **buf_out, int *size) {
 
     if (cursor < *size) {
         bm->read_block(find_block_by_index(max_block, node), buf);
-        memcpy(((*buf_out) + cursor), buf, *size - cursor);
+        std::memcpy(((*buf_out) + cursor), buf, *size - cursor);
     }
 
     free(node);
@@ -293,30 +295,31 @@ inode_manager::write_file(uint32_t inum, const char *buf, int size) {
      */
     inode *node = get_inode(inum);
 
-    if (node == NULL)
+    if (node == NULL) {
+        printf("Problem occurs: write_file meets NULL");
         return;
+    }
 
-    if (size + node->size > BLOCK_SIZE * MAXFILE)
+    if ((unsigned int) size >= BLOCK_SIZE * MAXFILE || size < 0)
         return;
 
 //    cursor indicates the cursor of buffer
     int cursor = 0;
-    char buf_tmp[BLOCK_SIZE];
 
     int has_block = 0;
-    if(node->size != 0)
+    if (node->size > 0)
         has_block = (node->size - 1) / BLOCK_SIZE + 1;
 
     int new_block = 0;
-    if(size != 0)
+    if (size > 0)
         new_block = (size - 1) / BLOCK_SIZE + 1;
 
+    printf("\t %d, %d, %d, %d \n", inum, node->size, has_block, new_block);
     if (has_block > new_block) {
         for (int i = new_block; i < has_block; ++i) {
             bm->free_block(find_block_by_index(i, node));
         }
-    }
-    else if(has_block < new_block) {
+    } else if (has_block < new_block) {
         for (int i = has_block; i < new_block; ++i) {
             alloc_new_block(i, node);
         }
@@ -324,17 +327,18 @@ inode_manager::write_file(uint32_t inum, const char *buf, int size) {
 
     new_block = size / BLOCK_SIZE;
 
-    for(int i = 0; i < new_block; ++i){
-        memcpy(buf_tmp, buf + cursor, BLOCK_SIZE);
-        bm->write_block(find_block_by_index(i, node), buf_tmp);
+    for (int i = 0; i < new_block; ++i) {
+        bm->write_block(find_block_by_index(i, node), buf + cursor);
         cursor += BLOCK_SIZE;
     }
 
-    if(cursor < size){
+    if (cursor < size) {
+        char buf_tmp[BLOCK_SIZE];
         memcpy(buf_tmp, buf + cursor, size - cursor);
         bm->write_block(find_block_by_index(new_block, node), buf_tmp);
     }
 
+    printf("%d", size);
     node->size = size;
     node->ctime = time(NULL);
     node->atime = time(NULL);
@@ -353,7 +357,7 @@ inode_manager::getattr(uint32_t inum, extent_protocol::attr &a) {
      * you can refer to "struct attr" in extent_protocol.h
      */
     inode *ret = get_inode(inum);
-    if (ret == NULL)
+    if (ret == nullptr)
         return;
 
     a.type = ret->type;
@@ -376,27 +380,25 @@ inode_manager::remove_file(uint32_t inum) {
     if (inum < 0 || inum >= INODE_NUM)
         return;
 
-    inode* node = get_inode(inum);
-    if(node == NULL)
+    inode *node = get_inode(inum);
+    if (node == nullptr)
         return;
 
 
     int block_num = 0;
-    if(node->size != 0)
+    if (node->size != 0)
         block_num = (node->size - 1) / BLOCK_SIZE;
 
 //    Free data and secondary level block
-    for(int i = 0; i < block_num; ++i){
+    for (int i = 0; i < block_num; ++i) {
         bm->free_block(find_block_by_index(i, node));
     }
 
-    if(block_num > NDIRECT)
+    if (block_num > NDIRECT)
         bm->free_block(node->blocks[NDIRECT]);
 
     bzero(node, sizeof(inode_t));
-
     free_inode(inum);
-
     free(node);
     return;
 }
