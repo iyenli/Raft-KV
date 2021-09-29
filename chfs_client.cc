@@ -201,11 +201,13 @@ chfs_client::create(inum parent, const char *name, mode_t mode, inum &ino_out) {
         return IOERR;
     }
 
-    dirent entry;
-    entry.name = std::string(name);
+    struct real_dirent_in_blocks entry;
+
+    entry.file_name_length = strlen(name);
+    memcpy((void*)(&entry.name), name, entry.file_name_length);
     entry.inum = ino_out;
 
-    buf.append((char *) (&entry), sizeof(dirent));
+    buf.append((char *) (&entry), sizeof(struct real_dirent_in_blocks));
 
     if (ec->put(parent, buf) != extent_protocol::OK) {
         printf("Problem occurs: write directory fails in create \n");
@@ -243,6 +245,13 @@ chfs_client::mkdir(inum parent, const char *name, mode_t mode, inum &ino_out) {
     }
 
     // TODO: What is your dir format?
+    struct real_dirent_in_blocks entry;
+
+    entry.file_name_length = strlen(name);
+    memcpy((void*)(&entry.name), name, entry.file_name_length);
+    entry.inum = ino_out;
+
+    buf.append((char *) (&entry), sizeof(struct real_dirent_in_blocks));
 
     if (ec->put(parent, buf) != extent_protocol::OK) {
         printf("Problem occurs: write parent fails in mkdir \n");
@@ -322,12 +331,16 @@ chfs_client::readdir(inum dir, std::list <dirent> &list) {
         printf("Problem occurs: read buf fails in readdir \n");
         return IOERR;
     }
-    size_t size_dirent = sizeof(dirent);
+    size_t size_dirent = sizeof(struct real_dirent_in_blocks);
     unsigned int entry_number = buf.size() / size_dirent;
 
     for (uint32_t i = 0; i < entry_number; ++i) {
-        dirent s;
-        memcpy((void *) &s, buf.c_str() + (i * size_dirent), size_dirent);
+        struct real_dirent_in_blocks entry;
+        memcpy((void *) &entry, buf.c_str() + (i * size_dirent), size_dirent);
+
+        struct dirent s;
+        memcpy((void*)(&s.name), &entry.name, entry.file_name_length);
+        s.inum = entry.inum;
         list.push_back(s);
     }
 
@@ -420,7 +433,7 @@ int chfs_client::unlink(inum parent, const char *name) {
     }
 
     if(!found){
-        printf("Problem occurs: No such a file in unlink \n");
+        printf("Problem occurs: No such a file to unlink \n");
         return NOENT;
     }
 
@@ -429,14 +442,28 @@ int chfs_client::unlink(inum parent, const char *name) {
         return IOERR;
     }
 
-    if (ec->remove(ino_out) != extent_protocol::OK) {
+    if (ec->remove(ino_out) != extent_protocol::OK || ec->remove(parent) != extent_protocol::OK) {
         printf("Problem occurs: delete node fails in unlink \n");
         return IOERR;
     }
 
     // TODO: What is your dic format here?
+    size_t size_dirent = sizeof(struct real_dirent_in_blocks);
+    unsigned int entry_number = buf.size() / size_dirent;
 
-    if (ec->put(parent, buf) != extent_protocol::OK) {
+    std::string new_dic;
+    size_t cursor = 0;
+    for (uint32_t i = 0; i < entry_number; ++i) {
+        struct real_dirent_in_blocks entry;
+        memcpy((void *) &entry, buf.c_str() + (i * size_dirent), size_dirent);
+
+        if(entry.inum != ino_out){
+            memcpy((void*)(new_dic.c_str() + cursor), &entry, size_dirent);
+            cursor += size_dirent;
+        }
+    }
+
+    if (ec->put(parent, new_dic) != extent_protocol::OK) {
         printf("Problem occurs: write parent fails in unlink \n");
         return IOERR;
     }

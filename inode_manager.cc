@@ -15,10 +15,6 @@ disk::read_block(blockid_t id, char *buf) {
 
 void
 disk::write_block(blockid_t id, const char *buf) {
-
-    int len = strlen(buf);
-
-    len = len > BLOCK_SIZE ? BLOCK_SIZE : len;
     std::memcpy(blocks[id], buf, BLOCK_SIZE);
     return;
 }

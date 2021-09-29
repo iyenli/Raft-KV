@@ -13,3 +13,70 @@ max_readahead=0x00020000
    max_background=0
    congestion_threshold=0
    unique: 2, success, outsize: 40
+unique: 4, opcode: LOOKUP (1), nodeid: 1, insize: 97, pid: 770
+extent_server: getattr 1
+	im: get_inode 1
+extent_server: getattr 1
+	im: get_inode 1
+extent_server: get 1
+	im: get_inode 1
+   unique: 4, error: -2 (No such file or directory), outsize: 16
+unique: 6, opcode: CREATE (35), nodeid: 1, insize: 113, pid: 770
+extent_server: getattr 1
+	im: get_inode 1
+extent_server: getattr 1
+	im: get_inode 1
+extent_server: get 1
+	im: get_inode 1
+extent_server: create inode
+	im: get_inode 2
+	im: inode not exist
+	im: put_inode 2
+extent_server: get 1
+	im: get_inode 1
+	im: get_inode 1
+	 1, 0, 0, 1 
+272	im: put_inode 1
+extent_server: getattr 2
+	im: get_inode 2
+isfile: 2 is a file
+getattr 0000000000000002 1
+extent_server: getattr 2
+	im: get_inode 2
+isfile: 2 is a file
+getfile 0000000000000002
+extent_server: getattr 2
+	im: get_inode 2
+getfile 0000000000000002 -> sz 0
+   getattr -> 0
+   unique: 6, success, outsize: 160
+OK: create returns.
+unique: 8, opcode: IOCTL (39), nodeid: 2, insize: 72, pid: 770
+   unique: 8, error: -38 (Function not implemented), outsize: 16
+unique: 10, opcode: GETATTR (3), nodeid: 2, insize: 56, pid: 770
+extent_server: getattr 2
+	im: get_inode 2
+isfile: 2 is a file
+getattr 0000000000000002 1
+extent_server: getattr 2
+	im: get_inode 2
+isfile: 2 is a file
+getfile 0000000000000002
+extent_server: getattr 2
+	im: get_inode 2
+getfile 0000000000000002 -> sz 0
+   getattr -> 0
+   unique: 10, success, outsize: 120
+unique: 12, opcode: FLUSH (25), nodeid: 2, insize: 64, pid: 770
+   unique: 12, error: -38 (Function not implemented), outsize: 16
+unique: 14, opcode: RELEASE (18), nodeid: 2, insize: 64, pid: 0
+   unique: 14, success, outsize: 16
+unique: 16, opcode: LOOKUP (1), nodeid: 1, insize: 97, pid: 770
+extent_server: getattr 1
+	im: get_inode 1
+extent_server: getattr 1
+	im: get_inode 1
+extent_server: get 1
+	im: get_inode 1
+terminate called after throwing an instance of 'std::length_error'
+  what():  basic_string::_M_create
