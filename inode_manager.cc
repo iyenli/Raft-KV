@@ -50,7 +50,7 @@ block_manager::free_block(uint32_t id) {
      */
 
     if (using_blocks[id] == 0) {
-        printf("you r write an unused block to 0.");
+        printf("you r write an unused block to 0 \n");
         return;
     }
 
@@ -138,7 +138,7 @@ inode_manager::free_inode(uint32_t inum) {
      */
 
     if (inum < 0 || inum >= INODE_NUM) {
-        printf("Problem occurs: free_inode meet a wrong inum");
+        printf("Problem occurs: free_inode meet a wrong inum \n");
         return;
     }
 
@@ -147,7 +147,7 @@ inode_manager::free_inode(uint32_t inum) {
         return;
 
     if (node->type == 0) {
-        printf("Problem occurs: try to free an unused inode");
+        printf("Problem occurs: try to free an unused inode \n");
         return;
     }
 
@@ -296,7 +296,7 @@ inode_manager::write_file(uint32_t inum, const char *buf, int size) {
     inode *node = get_inode(inum);
 
     if (node == NULL) {
-        printf("Problem occurs: write_file meets NULL");
+        printf("Problem occurs: write_file meets NULL \n");
         return;
     }
 

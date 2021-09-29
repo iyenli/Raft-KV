@@ -128,7 +128,7 @@ chfs_client::setattr(inum ino, size_t size) {
     extent_protocol::attr a;
 
     if (ec->getattr(ino, a) != extent_protocol::OK) {
-        printf("Problem occurs: get attr fails in setattr");
+        printf("Problem occurs: get attr fails in setattr \n");
         return IOERR;
     }
 
@@ -137,7 +137,7 @@ chfs_client::setattr(inum ino, size_t size) {
     }
 
     if (ec->get(ino, buf) != extent_protocol::OK) {
-        printf("Problem occurs: read buf fails in setattr");
+        printf("Problem occurs: read buf fails in setattr \n");
         return IOERR;
     }
 
@@ -148,12 +148,12 @@ chfs_client::setattr(inum ino, size_t size) {
 
     size_t written_size = 0;
     if (write(ino, size, 0, buf.c_str(), written_size) != OK) {
-        printf("Problem occurs: write buf to reduce size fails in setattr");
+        printf("Problem occurs: write buf to reduce size fails in setattr \n");
         return IOERR;
     }
 
     if (written_size != size) {
-        printf("Problem occurs: write buf size != Predicted size in setattr");
+        printf("Problem occurs: write buf size != Predicted size in setattr \n");
         return IOERR;
     }
 
@@ -173,11 +173,11 @@ chfs_client::create(inum parent, const char *name, mode_t mode, inum &ino_out) {
 //    We will check parent is dir in lookup function
 //    extent_protocol::attr parent_attr;
 //    if (ec->getattr(parent, parent_attr) != extent_protocol::OK) {
-//        printf("Problem occurs: get attr fails in create");
+//        printf("Problem occurs: get attr fails in create \n");
 //        return IOERR;
 //    }
 //    else if(parent_attr.type != extent_protocol::T_DIR){
-//        printf("Problem occurs: parent not a dir in create");
+//        printf("Problem occurs: parent not a dir in create \n");
 //        return IOERR;
 //    }
 
@@ -187,17 +187,17 @@ chfs_client::create(inum parent, const char *name, mode_t mode, inum &ino_out) {
     // Test legacy of name and parent inum
     inum inode_out = 0;
     if (lookup(parent, name, found, inode_out) == OK && found) {
-        printf("Problem occurs: EXIST filename in create");
+        printf("Problem occurs: EXIST filename in create \n");
         return EXIST;
     }
 
     if (ec->create(extent_protocol::T_FILE, ino_out) != extent_protocol::OK) {
-        printf("Problem occurs: ec creates file fail in create");
+        printf("Problem occurs: ec creates file fail in create \n");
         return IOERR;
     }
 
     if (ec->get(parent, buf) != extent_protocol::OK) {
-        printf("Problem occurs: read directory fails in create");
+        printf("Problem occurs: read directory fails in create \n");
         return IOERR;
     }
 
@@ -208,7 +208,7 @@ chfs_client::create(inum parent, const char *name, mode_t mode, inum &ino_out) {
     buf.append((char *) (&entry), sizeof(dirent));
 
     if (ec->put(parent, buf) != extent_protocol::OK) {
-        printf("Problem occurs: write directory fails in create");
+        printf("Problem occurs: write directory fails in create \n");
         return IOERR;
     }
 
@@ -228,24 +228,24 @@ chfs_client::mkdir(inum parent, const char *name, mode_t mode, inum &ino_out) {
     bool found = false;
     std::string buf;
     if (lookup(parent, name, found, ino_out) == extent_protocol::OK && found) {
-        printf("Problem occurs: dup dir name in mkdir");
+        printf("Problem occurs: dup dir name in mkdir \n");
         return IOERR;
     }
 
     if (ec->get(parent, buf) != extent_protocol::OK) {
-        printf("Problem occurs: read parent fails in mkdir");
+        printf("Problem occurs: read parent fails in mkdir \n");
         return IOERR;
     }
 
     if (ec->create(extent_protocol::T_DIR, ino_out) != extent_protocol::OK) {
-        printf("Problem occurs: create dir fails in mkdir");
+        printf("Problem occurs: create dir fails in mkdir \n");
         return IOERR;
     }
 
     // TODO: What is your dir format?
 
     if (ec->put(parent, buf) != extent_protocol::OK) {
-        printf("Problem occurs: write parent fails in mkdir");
+        printf("Problem occurs: write parent fails in mkdir \n");
         return IOERR;
     }
     return r;
@@ -264,17 +264,17 @@ chfs_client::lookup(inum parent, const char *name, bool &found, inum &ino_out) {
     extent_protocol::attr attr;
 
     if (ec->getattr(parent, attr) != extent_protocol::OK) {
-        printf("Problem occurs: getattr fails in lookup");
+        printf("Problem occurs: getattr fails in lookup \n");
         return IOERR;
     }
 
     if (attr.type != extent_protocol::T_DIR) {
-        printf("Problem occurs: Wrong file type in readdir");
+        printf("Problem occurs: Wrong file type in readdir \n");
         return IOERR;
     }
 
     if (readdir(parent, l) != extent_protocol::OK) {
-        printf("Problem occurs: readdir fails in lookup");
+        printf("Problem occurs: readdir fails in lookup \n");
         return IOERR;
     }
 
@@ -308,18 +308,18 @@ chfs_client::readdir(inum dir, std::list <dirent> &list) {
     extent_protocol::attr a;
 
     if (ec->getattr(dir, a) != extent_protocol::OK) {
-        printf("Problem occurs: get attr fails in readdir");
+        printf("Problem occurs: get attr fails in readdir \n");
         return IOERR;
     }
 
     // check type == DIR here
     if (a.type != extent_protocol::T_DIR) {
-        printf("Problem occurs: parent not a dic in readdir");
+        printf("Problem occurs: parent not a dic in readdir \n");
         return IOERR;
     }
 
     if (ec->get(dir, buf) != extent_protocol::OK) {
-        printf("Problem occurs: read buf fails in readdir");
+        printf("Problem occurs: read buf fails in readdir \n");
         return IOERR;
     }
     size_t size_dirent = sizeof(dirent);
@@ -347,15 +347,15 @@ chfs_client::read(inum ino, size_t size, off_t off, std::string &data) {
     std::string buf = "";
 
     if (ec->getattr(ino, attr) != extent_protocol::OK) {
-        printf("Problem occurs: get attr fails in read");
+        printf("Problem occurs: get attr fails in read \n");
         return IOERR;
     }
     if (ec->get(ino, buf) != extent_protocol::OK) {
-        printf("Problem occurs: get data fails in read");
+        printf("Problem occurs: get data fails in read \n");
         return IOERR;
     }
     if (attr.size <= off) {
-        printf("Problem occurs: read offset is larger than size in read");
+        printf("Problem occurs: read offset is larger than size in read \n");
         return IOERR;
     }
 
@@ -376,12 +376,12 @@ chfs_client::write(inum ino, size_t size, off_t off, const char *data,
     std::string buf = "", data_str = std::string(data);
 
     if (size > data_str.size()) {
-        printf("Problem occurs: write size is larger than provided in write");
+        printf("Problem occurs: write size is larger than provided in write \n");
         return IOERR;
     }
 
     if (ec->get(ino, buf) != extent_protocol::OK) {
-        printf("Problem occurs: get data fails in write");
+        printf("Problem occurs: get data fails in write \n");
         return IOERR;
     }
 
@@ -396,7 +396,7 @@ chfs_client::write(inum ino, size_t size, off_t off, const char *data,
     buf.insert(buf.begin() + off, data_str.begin(), data_str.end());
 
     if (ec->put(ino, buf) != extent_protocol::OK) {
-        printf("Problem occurs: write back data fails in write");
+        printf("Problem occurs: write back data fails in write \n");
         return IOERR;
     }
     return r;
@@ -415,29 +415,29 @@ int chfs_client::unlink(inum parent, const char *name) {
     std::string buf;
     inum ino_out = 0;
     if (lookup(parent, name, found, ino_out) != extent_protocol::OK) {
-        printf("Problem occurs: read parent fails in unlink");
+        printf("Problem occurs: read parent fails in unlink \n");
         return IOERR;
     }
 
     if(!found){
-        printf("Problem occurs: No such a file in unlink");
+        printf("Problem occurs: No such a file in unlink \n");
         return NOENT;
     }
 
     if (ec->get(parent, buf) != extent_protocol::OK) {
-        printf("Problem occurs: read parent fails in unlink");
+        printf("Problem occurs: read parent fails in unlink \n");
         return IOERR;
     }
 
     if (ec->remove(ino_out) != extent_protocol::OK) {
-        printf("Problem occurs: delete node fails in unlink");
+        printf("Problem occurs: delete node fails in unlink \n");
         return IOERR;
     }
 
     // TODO: What is your dic format here?
 
     if (ec->put(parent, buf) != extent_protocol::OK) {
-        printf("Problem occurs: write parent fails in unlink");
+        printf("Problem occurs: write parent fails in unlink \n");
         return IOERR;
     }
     return r;
