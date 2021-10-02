@@ -53,16 +53,22 @@ chfs_client::isfile(inum inum) {
     return false;
 }
 
-/** Your code here for Lab...
- * You may need to add routines such as
- * readlink, issymlink here to implement symbolic link.
- * 
- * */
 
 bool
 chfs_client::isdir(inum inum) {
-    // Oops! is this still correct when you implement symlink?
-    return !isfile(inum);
+    // used to change origin code here;
+    extent_protocol::attr a;
+    if (ec->getattr(inum, a) != extent_protocol::OK) {
+        printf("Problem occurs: get attr fails in isdir \n");
+        return false;
+    }
+
+    if (a.type == extent_protocol::T_DIR) {
+        return true;
+    }
+
+//    SYM LINK Not a dir
+    return false;
 }
 
 int
@@ -72,7 +78,8 @@ chfs_client::getfile(inum inum, fileinfo &fin) {
     printf("getfile %016llx\n", inum);
     extent_protocol::attr a;
     if (ec->getattr(inum, a) != extent_protocol::OK) {
-        r = IOERR;
+
+        printf("Problem occurs: get attr fails in GETFILE \n");
         goto release;
     }
 
@@ -93,6 +100,7 @@ chfs_client::getdir(inum inum, dirinfo &din) {
     printf("getdir %016llx\n", inum);
     extent_protocol::attr a;
     if (ec->getattr(inum, a) != extent_protocol::OK) {
+        printf("Problem occurs: get attr fails in GETdir \n");
         r = IOERR;
         goto release;
     }
@@ -125,35 +133,20 @@ chfs_client::setattr(inum ino, size_t size) {
      */
 
     std::string buf;
-    extent_protocol::attr a;
 
-    if (ec->getattr(ino, a) != extent_protocol::OK) {
-        printf("Problem occurs: get attr fails in setattr \n");
-        return IOERR;
-    }
-
-    if (a.size == size) {
-        return OK;
-    }
+//    Bugs!!!
+//    Can't change time!!!
+//    if (buf.size() == size) {
+//        return OK;
+//    }
 
     if (ec->get(ino, buf) != extent_protocol::OK) {
         printf("Problem occurs: read buf fails in setattr \n");
         return IOERR;
     }
-
-    if (a.size < size) {
-        std::string str = std::string(size - a.size, '\0');
-        buf.insert(buf.end(), str.begin(), str.end());
-    }
-
-    size_t written_size = 0;
-    if (write(ino, size, 0, buf.c_str(), written_size) != OK) {
-        printf("Problem occurs: write buf to reduce size fails in setattr \n");
-        return IOERR;
-    }
-
-    if (written_size != size) {
-        printf("Problem occurs: write buf size != Predicted size in setattr \n");
+    buf.resize(size);
+    if (ec->put(ino, buf) != extent_protocol::OK) {
+        printf("Problem occurs: write buf fails in setattr \n");
         return IOERR;
     }
 
@@ -185,8 +178,12 @@ chfs_client::create(inum parent, const char *name, mode_t mode, inum &ino_out) {
     bool found = false;
 
     // Test legacy of name and parent inum
-    inum inode_out = 0;
-    if (lookup(parent, name, found, inode_out) == OK && found) {
+    if (lookup(parent, name, found, ino_out) != OK) {
+        printf("Problem occurs: EXIST filename in create \n");
+        return IOERR;
+    }
+
+    if (found) {
         printf("Problem occurs: EXIST filename in create \n");
         return EXIST;
     }
@@ -204,10 +201,10 @@ chfs_client::create(inum parent, const char *name, mode_t mode, inum &ino_out) {
     struct real_dirent_in_blocks entry;
 
     entry.file_name_length = strlen(name);
-    memcpy((void*)(&entry.name), name, entry.file_name_length);
+    memcpy((entry.name), name, entry.file_name_length);
     entry.inum = ino_out;
 
-    buf.append((char *) (&entry), sizeof(struct real_dirent_in_blocks));
+    buf.append((char *) (&entry), sizeof(real_dirent_in_blocks));
 
     if (ec->put(parent, buf) != extent_protocol::OK) {
         printf("Problem occurs: write directory fails in create \n");
@@ -229,9 +226,15 @@ chfs_client::mkdir(inum parent, const char *name, mode_t mode, inum &ino_out) {
 
     bool found = false;
     std::string buf;
-    if (lookup(parent, name, found, ino_out) == extent_protocol::OK && found) {
+
+    if (lookup(parent, name, found, ino_out) != OK) {
         printf("Problem occurs: dup dir name in mkdir \n");
         return IOERR;
+    }
+
+    if (found) {
+        printf("Problem occurs: dup dir name in mkdir \n");
+        return EXIST;
     }
 
     if (ec->get(parent, buf) != extent_protocol::OK) {
@@ -248,10 +251,10 @@ chfs_client::mkdir(inum parent, const char *name, mode_t mode, inum &ino_out) {
     struct real_dirent_in_blocks entry;
 
     entry.file_name_length = strlen(name);
-    memcpy((void*)(&entry.name), name, entry.file_name_length);
+    memcpy((entry.name), name, entry.file_name_length);
     entry.inum = ino_out;
 
-    buf.append((char *) (&entry), sizeof(struct real_dirent_in_blocks));
+    buf.append((char *) (&entry), sizeof(real_dirent_in_blocks));
 
     if (ec->put(parent, buf) != extent_protocol::OK) {
         printf("Problem occurs: write parent fails in mkdir \n");
@@ -262,27 +265,18 @@ chfs_client::mkdir(inum parent, const char *name, mode_t mode, inum &ino_out) {
 
 int
 chfs_client::lookup(inum parent, const char *name, bool &found, inum &ino_out) {
-    int r = OK;
-
     /*
      * your code goes here.
      * note: lookup file from parent dir according to name;
      * you should design the format of directory content.
      */
     std::list <dirent> l;
-    extent_protocol::attr attr;
-
-    if (ec->getattr(parent, attr) != extent_protocol::OK) {
-        printf("Problem occurs: getattr fails in lookup \n");
-        return IOERR;
-    }
-
-    if (attr.type != extent_protocol::T_DIR) {
+    if (!isdir(parent)) {
         printf("Problem occurs: Wrong file type in readdir \n");
         return IOERR;
     }
 
-    if (readdir(parent, l) != extent_protocol::OK) {
+    if (readdir(parent, l) != OK) {
         printf("Problem occurs: readdir fails in lookup \n");
         return IOERR;
     }
@@ -300,7 +294,7 @@ chfs_client::lookup(inum parent, const char *name, bool &found, inum &ino_out) {
 
     // NOT Found here
     found = false;
-    return r;
+    return OK;
 }
 
 int
@@ -314,15 +308,9 @@ chfs_client::readdir(inum dir, std::list <dirent> &list) {
      */
 
     std::string buf;
-    extent_protocol::attr a;
-
-    if (ec->getattr(dir, a) != extent_protocol::OK) {
-        printf("Problem occurs: get attr fails in readdir \n");
-        return IOERR;
-    }
 
     // check type == DIR here
-    if (a.type != extent_protocol::T_DIR) {
+    if (!isdir(dir)) {
         printf("Problem occurs: parent not a dic in readdir \n");
         return IOERR;
     }
@@ -331,16 +319,18 @@ chfs_client::readdir(inum dir, std::list <dirent> &list) {
         printf("Problem occurs: read buf fails in readdir \n");
         return IOERR;
     }
+
     size_t size_dirent = sizeof(struct real_dirent_in_blocks);
     unsigned int entry_number = buf.size() / size_dirent;
+    const char *cursor = buf.c_str();
 
-    for (uint32_t i = 0; i < entry_number; ++i) {
+    for (unsigned int i = 0; i < entry_number; ++i) {
         struct real_dirent_in_blocks entry;
-        memcpy((void *) &entry, buf.c_str() + (i * size_dirent), size_dirent);
+        memcpy(&entry, cursor + (i * size_dirent), size_dirent);
 
         struct dirent s;
-        memcpy((void*)(&s.name), &entry.name, entry.file_name_length);
         s.inum = entry.inum;
+        s.name.assign(entry.name, entry.file_name_length);
         list.push_back(s);
     }
 
@@ -355,29 +345,25 @@ chfs_client::read(inum ino, size_t size, off_t off, std::string &data) {
      * your code goes here.
      * note: read using ec->get().
      */
-
-    extent_protocol::attr attr;
     std::string buf = "";
 
-    if (ec->getattr(ino, attr) != extent_protocol::OK) {
-        printf("Problem occurs: get attr fails in read \n");
-        return IOERR;
-    }
     if (ec->get(ino, buf) != extent_protocol::OK) {
         printf("Problem occurs: get data fails in read \n");
         return IOERR;
     }
-    if (attr.size <= off) {
+    if ((long int) buf.size() <= off) {
         printf("Problem occurs: read offset is larger than size in read \n");
         return IOERR;
     }
 
+    data.clear();
     data = buf.substr(off, size);
+
     return r;
 }
 
 int
-chfs_client::write(inum ino, size_t size, off_t off, const char *data,
+chfs_client::write(inum ino, size_t size, off64_t off, const char *data,
                    size_t &bytes_written) {
     int r = OK;
     /*
@@ -388,25 +374,27 @@ chfs_client::write(inum ino, size_t size, off_t off, const char *data,
 
     std::string buf = "", data_str = std::string(data);
 
+    // function caller has to check size
     if (size > data_str.size()) {
-        printf("Problem occurs: write size is larger than provided in write \n");
+        printf("Problem occurs: write size (%zu) is larger than provided(%lu) in write \n", size, data_str.size());
         return IOERR;
+    } else {
+        data_str.resize(size);
     }
+
+    printf("write: size=%zu, off=%ld, byte size = %lu", size, off, data_str.size());
 
     if (ec->get(ino, buf) != extent_protocol::OK) {
         printf("Problem occurs: get data fails in write \n");
         return IOERR;
     }
 
-    if ((long unsigned int) off <= buf.size()) {
-        bytes_written = size;
-    } else {
-        bytes_written = (off - buf.size() + size);
-        std::string tmp = std::string(off - buf.size(), '\0');
-        data_str.insert(data_str.begin(), tmp.begin(), tmp.end());
-    }
+    bytes_written = size;
 
-    buf.insert(buf.begin() + off, data_str.begin(), data_str.end());
+    if (buf.size() <= (unsigned int) (((unsigned int)off) + size)) {
+        buf.resize((size_t)(((unsigned int)off) + size), '\0');
+    }
+    buf.replace(((unsigned int)off), size, data_str);
 
     if (ec->put(ino, buf) != extent_protocol::OK) {
         printf("Problem occurs: write back data fails in write \n");
@@ -427,39 +415,40 @@ int chfs_client::unlink(inum parent, const char *name) {
     bool found = false;
     std::string buf;
     inum ino_out = 0;
-    if (lookup(parent, name, found, ino_out) != extent_protocol::OK) {
+    if (lookup(parent, name, found, ino_out) != OK) {
         printf("Problem occurs: read parent fails in unlink \n");
         return IOERR;
     }
 
     if(!found){
-        printf("Problem occurs: No such a file to unlink \n");
+        printf("Problem occurs: not found name in unlink \n");
         return NOENT;
     }
 
-    if (ec->get(parent, buf) != extent_protocol::OK) {
-        printf("Problem occurs: read parent fails in unlink \n");
-        return IOERR;
-    }
-
-    if (ec->remove(ino_out) != extent_protocol::OK || ec->remove(parent) != extent_protocol::OK) {
+    if (ec->remove(ino_out) != extent_protocol::OK) {
         printf("Problem occurs: delete node fails in unlink \n");
         return IOERR;
     }
 
-    // TODO: What is your dic format here?
-    size_t size_dirent = sizeof(struct real_dirent_in_blocks);
-    unsigned int entry_number = buf.size() / size_dirent;
+    std::list<dirent> l;
+
+    if(readdir(parent, l) != extent_protocol::OK){
+        printf("Problem occurs: get l fails in unlink \n");
+        return IOERR;
+    }
 
     std::string new_dic;
-    size_t cursor = 0;
-    for (uint32_t i = 0; i < entry_number; ++i) {
-        struct real_dirent_in_blocks entry;
-        memcpy((void *) &entry, buf.c_str() + (i * size_dirent), size_dirent);
 
-        if(entry.inum != ino_out){
-            memcpy((void*)(new_dic.c_str() + cursor), &entry, size_dirent);
-            cursor += size_dirent;
+    while (!l.empty()) {
+        struct dirent entry = l.front();
+        l.pop_front();
+
+        if (entry.inum != ino_out) {
+            real_dirent_in_blocks s;
+            s.file_name_length = entry.name.size();
+            s.inum = entry.inum;
+            memcpy(s.name, entry.name.c_str(), s.file_name_length);
+            new_dic.append((char *) (&s), sizeof(struct real_dirent_in_blocks));
         }
     }
 
@@ -472,4 +461,85 @@ int chfs_client::unlink(inum parent, const char *name) {
 
 // TODO: Handle symbolic link!
 
+/** Your code here for Lab...
+ * You may need to add routines such as
+ * readlink, issymlink here to implement symbolic link.
+ *
+ * */
 
+bool
+chfs_client::issymlink(inum inum) {
+    extent_protocol::attr a;
+    if (ec->getattr(inum, a) != extent_protocol::OK) {
+        printf("Problem occurs: get attr fails in issym \n");
+        return false;
+    }
+
+    if (a.type == extent_protocol::T_SYMLINK) {
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ *
+ * @param node  inum
+ * @param buf  content of link
+ * @return
+ */
+int
+chfs_client::read_link(inum node, std::string &buf) {
+
+    if (ec->get(node, buf) != extent_protocol::OK) {
+        printf("Problem occurs: write parent fails in read link \n");
+        return IOERR;
+    }
+
+    return OK;
+}
+
+
+/**
+ * this function link dest to parent/name
+ * @param link
+ * @return chfs::status
+ */
+int
+chfs_client::symlink(inum parent, const char *name, const char *dest, inum &inode) {
+    std::string buf;
+    if (ec->get(parent, buf) != extent_protocol::OK) {
+        printf("Problem occurs: write parent fails in symlink \n");
+        return IOERR;
+    }
+
+    bool found = false;
+    inum tmp = 0;
+    if (lookup(parent, name, found, tmp) == OK && found) {
+        printf("Problem occurs: dup dir name in symlink \n");
+        return EXIST;
+    }
+
+    if (ec->create(extent_protocol::T_SYMLINK, inode) != extent_protocol::OK) {
+        printf("Problem occurs: create soft link fails in symlink \n");
+        return IOERR;
+    }
+
+    if (ec->put(inode, std::string(dest)) != extent_protocol::OK) {
+        printf("Problem occurs: write symlink into buf fails in symlink \n");
+        return IOERR;
+    }
+
+    struct real_dirent_in_blocks entry;
+    entry.inum = inode;
+    entry.file_name_length = strlen(name);
+    memcpy((void *) (&entry.name), name, entry.file_name_length);
+    buf.append((char *) (&entry), sizeof(struct real_dirent_in_blocks));
+
+    if (ec->put(parent, buf) != extent_protocol::OK) {
+        printf("Problem occurs: write parent fails in symlink \n");
+        return IOERR;
+    }
+
+    return OK;
+}

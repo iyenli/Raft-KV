@@ -29,7 +29,7 @@ block_manager::alloc_block() {
      * note: you should mark the corresponding bit in block bitmap when alloc.
      * you need to think about which block you can start to be allocated.
      */
-    for (int i = MAXFILE; i <= BLOCK_NUM; ++i) {
+    for (int i = (IBLOCK(INODE_NUM, sb.nblocks) + 1); i <= BLOCK_NUM; ++i) {
         if (using_blocks[i] == 0) {
             using_blocks[i] = 1;
             return i;
@@ -111,7 +111,6 @@ inode_manager::alloc_inode(uint32_t type) {
         node = (inode_t *) malloc(sizeof(inode_t));
         bzero(node, sizeof(inode_t));
         node->type = type;
-        node->size = 0;
         node->ctime = time(NULL);
         node->mtime = time(NULL);
         node->atime = time(NULL);
@@ -160,7 +159,7 @@ inode_manager::get_inode(uint32_t inum) {
     struct inode *ino, *ino_disk;
     char buf[BLOCK_SIZE];
 
-    printf("\tim: get_inode %d\n", inum);
+//    printf("\tim: get_inode %d\n", inum);
 
     if (inum < 0 || inum >= INODE_NUM) {
         printf("\tim: inum out of range\n");
@@ -187,7 +186,7 @@ inode_manager::put_inode(uint32_t inum, struct inode *ino) {
     char buf[BLOCK_SIZE];
     struct inode *ino_disk;
 
-    printf("\tim: put_inode %d\n", inum);
+//    printf("\tim: put_inode %d\n", inum);
     if (ino == NULL)
         return;
 
@@ -239,7 +238,7 @@ inode_manager::alloc_new_block(int tol, inode *node) {
     }
 }
 
-/* Get all the data of a file by inum. 
+/* Get all the data of a file by inum.
  * Return alloced data, should be freed by caller. */
 void
 inode_manager::read_file(uint32_t inum, char **buf_out, int *size) {
@@ -296,8 +295,10 @@ inode_manager::write_file(uint32_t inum, const char *buf, int size) {
         return;
     }
 
-    if ((unsigned int) size >= BLOCK_SIZE * MAXFILE || size < 0)
+
+    if ((unsigned int) size >= BLOCK_SIZE * MAXFILE || size < 0) {
         return;
+    }
 
 //    cursor indicates the cursor of buffer
     int cursor = 0;
@@ -310,6 +311,7 @@ inode_manager::write_file(uint32_t inum, const char *buf, int size) {
     if (size > 0)
         new_block = (size - 1) / BLOCK_SIZE + 1;
 
+    printf("for debug: size = %d, %d \n", size, (unsigned int) size);
     printf("\t %d, %d, %d, %d \n", inum, node->size, has_block, new_block);
     if (has_block > new_block) {
         for (int i = new_block; i < has_block; ++i) {

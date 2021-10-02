@@ -35,9 +35,10 @@ public:
     };
 
     struct real_dirent_in_blocks {
-        chfs_client::inum inum;
-        uint8_t file_name_length;
         char name[256];
+        chfs_client::inum inum;
+        size_t file_name_length;
+
     };
 
 private:
@@ -66,7 +67,7 @@ public:
 
     int readdir(inum, std::list <dirent> &);
 
-    int write(inum, size_t, off_t, const char *, size_t &);
+    int write(inum, size_t, off64_t, const char *, size_t &);
 
     int read(inum, size_t, off_t, std::string &);
 
@@ -76,9 +77,11 @@ public:
 
     /** you may need to add symbolic link related methods here.*/
 
-    int read_link(const char *link);
+    int read_link(inum, std::string &);
 
-    int symbolic_link(char *link);
+    int symlink(inum, const char *, const char *, inum &);
+
+    bool issymlink(inum);
 };
 
-#endif 
+#endif
