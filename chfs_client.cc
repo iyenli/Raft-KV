@@ -372,23 +372,21 @@ chfs_client::write(inum ino, size_t size, off64_t off, const char *data,
      * when off > length of original file, fill the holes with '\0'.
      */
 
-    std::string buf = "", data_str = std::string(data);
-
-    // function caller has to check size
-    if (size > data_str.size()) {
-        printf("Problem occurs: write size (%zu) is larger than provided(%lu) in write \n", size, data_str.size());
-        return IOERR;
-    } else {
-        data_str.resize(size);
-    }
-
-    printf("write: size=%zu, off=%ld, byte size = %lu", size, off, data_str.size());
+    std::string buf = "", data_str = std::string(data, size);
 
     if (ec->get(ino, buf) != extent_protocol::OK) {
         printf("Problem occurs: get data fails in write \n");
         return IOERR;
     }
 
+    // function caller has to check size
+    if (size > data_str.size()) {
+        printf("Problem occurs: write size (%zu) is larger than provided(%lu) in write \n", size, data_str.size());
+        return IOERR;
+    }
+
+    printf("write: size=%zu, off=%ld, byte size = %lu", size, off, data_str.size());
+    
     bytes_written = size;
 
     if (buf.size() <= (unsigned int) (((unsigned int)off) + size)) {
