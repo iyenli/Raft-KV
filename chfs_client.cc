@@ -144,13 +144,30 @@ chfs_client::setattr(inum ino, size_t size) {
         printf("Problem occurs: read buf fails in setattr \n");
         return IOERR;
     }
+
     buf.resize(size);
+
     if (ec->put(ino, buf) != extent_protocol::OK) {
         printf("Problem occurs: write buf fails in setattr \n");
         return IOERR;
     }
 
     return r;
+}
+
+/**
+ *
+ * @param name name of file name entry
+ * @param wait4write the data structure stored in blocks
+ */
+void
+chfs_client::setEntry(const char *name, inum inode, real_dirent_in_blocks &entry){
+//    Set inode number and name length
+    entry.file_name_length = strlen(name);
+    entry.inum = inode;
+
+    memcpy((entry.name), name, strlen(name));
+    return;
 }
 
 int
@@ -179,7 +196,7 @@ chfs_client::create(inum parent, const char *name, mode_t mode, inum &ino_out) {
 
     // Test legacy of name and parent inum
     if (lookup(parent, name, found, ino_out) != OK) {
-        printf("Problem occurs: EXIST filename in create \n");
+        printf("Problem occurs: lookup fails in create \n");
         return IOERR;
     }
 
@@ -199,11 +216,7 @@ chfs_client::create(inum parent, const char *name, mode_t mode, inum &ino_out) {
     }
 
     struct real_dirent_in_blocks entry;
-
-    entry.file_name_length = strlen(name);
-    memcpy((entry.name), name, entry.file_name_length);
-    entry.inum = ino_out;
-
+    setEntry(name, ino_out, entry);
     buf.append((char *) (&entry), sizeof(real_dirent_in_blocks));
 
     if (ec->put(parent, buf) != extent_protocol::OK) {
@@ -247,13 +260,8 @@ chfs_client::mkdir(inum parent, const char *name, mode_t mode, inum &ino_out) {
         return IOERR;
     }
 
-    // TODO: What is your dir format?
     struct real_dirent_in_blocks entry;
-
-    entry.file_name_length = strlen(name);
-    memcpy((entry.name), name, entry.file_name_length);
-    entry.inum = ino_out;
-
+    setEntry(name, ino_out, entry);
     buf.append((char *) (&entry), sizeof(real_dirent_in_blocks));
 
     if (ec->put(parent, buf) != extent_protocol::OK) {
@@ -326,11 +334,12 @@ chfs_client::readdir(inum dir, std::list <dirent> &list) {
 
     for (unsigned int i = 0; i < entry_number; ++i) {
         struct real_dirent_in_blocks entry;
-        memcpy(&entry, cursor + (i * size_dirent), size_dirent);
+        memcpy((void *)&entry, cursor + (i * size_dirent), size_dirent);
 
         struct dirent s;
         s.inum = entry.inum;
         s.name.assign(entry.name, entry.file_name_length);
+
         list.push_back(s);
     }
 
@@ -386,7 +395,7 @@ chfs_client::write(inum ino, size_t size, off64_t off, const char *data,
     }
 
     printf("write: size=%zu, off=%ld, byte size = %lu", size, off, data_str.size());
-    
+
     bytes_written = size;
 
     if (buf.size() <= (unsigned int) (((unsigned int)off) + size)) {
@@ -413,6 +422,7 @@ int chfs_client::unlink(inum parent, const char *name) {
     bool found = false;
     std::string buf;
     inum ino_out = 0;
+
     if (lookup(parent, name, found, ino_out) != OK) {
         printf("Problem occurs: read parent fails in unlink \n");
         return IOERR;
@@ -429,23 +439,19 @@ int chfs_client::unlink(inum parent, const char *name) {
     }
 
     std::list<dirent> l;
-
     if(readdir(parent, l) != extent_protocol::OK){
         printf("Problem occurs: get l fails in unlink \n");
         return IOERR;
     }
 
     std::string new_dic;
-
     while (!l.empty()) {
         struct dirent entry = l.front();
         l.pop_front();
 
         if (entry.inum != ino_out) {
             real_dirent_in_blocks s;
-            s.file_name_length = entry.name.size();
-            s.inum = entry.inum;
-            memcpy(s.name, entry.name.c_str(), s.file_name_length);
+            setEntry(entry.name.c_str(), entry.inum, s);
             new_dic.append((char *) (&s), sizeof(struct real_dirent_in_blocks));
         }
     }
@@ -457,8 +463,6 @@ int chfs_client::unlink(inum parent, const char *name) {
     return r;
 }
 
-// TODO: Handle symbolic link!
-
 /** Your code here for Lab...
  * You may need to add routines such as
  * readlink, issymlink here to implement symbolic link.
@@ -468,6 +472,7 @@ int chfs_client::unlink(inum parent, const char *name) {
 bool
 chfs_client::issymlink(inum inum) {
     extent_protocol::attr a;
+
     if (ec->getattr(inum, a) != extent_protocol::OK) {
         printf("Problem occurs: get attr fails in issym \n");
         return false;
@@ -476,7 +481,6 @@ chfs_client::issymlink(inum inum) {
     if (a.type == extent_protocol::T_SYMLINK) {
         return true;
     }
-
     return false;
 }
 
@@ -490,10 +494,9 @@ int
 chfs_client::read_link(inum node, std::string &buf) {
 
     if (ec->get(node, buf) != extent_protocol::OK) {
-        printf("Problem occurs: write parent fails in read link \n");
+        printf("Problem occurs: get parent fails in read link \n");
         return IOERR;
     }
-
     return OK;
 }
 
@@ -506,6 +509,7 @@ chfs_client::read_link(inum node, std::string &buf) {
 int
 chfs_client::symlink(inum parent, const char *name, const char *dest, inum &inode) {
     std::string buf;
+
     if (ec->get(parent, buf) != extent_protocol::OK) {
         printf("Problem occurs: write parent fails in symlink \n");
         return IOERR;
@@ -513,7 +517,12 @@ chfs_client::symlink(inum parent, const char *name, const char *dest, inum &inod
 
     bool found = false;
     inum tmp = 0;
-    if (lookup(parent, name, found, tmp) == OK && found) {
+    if (lookup(parent, name, found, tmp) != OK) {
+        printf("Problem occurs: lookup fails in symlink \n");
+        return IOERR;
+    }
+
+    if(found){
         printf("Problem occurs: dup dir name in symlink \n");
         return EXIST;
     }
@@ -529,9 +538,7 @@ chfs_client::symlink(inum parent, const char *name, const char *dest, inum &inod
     }
 
     struct real_dirent_in_blocks entry;
-    entry.inum = inode;
-    entry.file_name_length = strlen(name);
-    memcpy((void *) (&entry.name), name, entry.file_name_length);
+    setEntry(name, inode, entry);
     buf.append((char *) (&entry), sizeof(struct real_dirent_in_blocks));
 
     if (ec->put(parent, buf) != extent_protocol::OK) {

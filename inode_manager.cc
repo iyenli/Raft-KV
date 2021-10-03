@@ -199,6 +199,12 @@ inode_manager::put_inode(uint32_t inum, struct inode *ino) {
 #define MIN(a, b) ((a)<(b) ? (a) : (b))
 #define GET_BLOCK_NUM_BY_SIZE(size) (size % BLOCK_SIZE == 0? size / BLOCK_SIZE: size / BLOCK_SIZE + 1)
 
+
+/**
+ *
+ * @param tol index of node we want, if > ND, find secondary level
+ * @param node
+ */
 blockid_t
 inode_manager::find_block_by_index(int index, inode *node) {
 
@@ -219,6 +225,12 @@ inode_manager::find_block_by_index(int index, inode *node) {
     exit(0);
 }
 
+
+/**
+ *
+ * @param tol index of node we want, if > ND, find secondary level
+ * @param node
+ */
 void
 inode_manager::alloc_new_block(int tol, inode *node) {
 
@@ -313,6 +325,7 @@ inode_manager::write_file(uint32_t inum, const char *buf, int size) {
 
     printf("for debug: size = %d, %d \n", size, (unsigned int) size);
     printf("\t %d, %d, %d, %d \n", inum, node->size, has_block, new_block);
+
     if (has_block > new_block) {
         for (int i = new_block; i < has_block; ++i) {
             bm->free_block(find_block_by_index(i, node));

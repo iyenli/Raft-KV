@@ -46,6 +46,8 @@ private:
 
     static inum n2i(std::string);
 
+    void setEntry(const char *, inum, real_dirent_in_blocks &);
+
 public:
     chfs_client();
 
