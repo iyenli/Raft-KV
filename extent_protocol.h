@@ -9,6 +9,8 @@ class extent_protocol {
  public:
   typedef int status;
   typedef unsigned long long extentid_t;
+
+//  STATUS
   enum xxstatus { OK, RPCERR, NOENT, IOERR };
   enum rpc_numbers {
     put = 0x6001,
@@ -20,7 +22,8 @@ class extent_protocol {
 
   enum types {
     T_DIR = 1,
-    T_FILE
+    T_FILE,
+    T_SYMLINK
   };
 
   struct attr {
