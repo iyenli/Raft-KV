@@ -1,0 +1,73 @@
+FUSE library version: 2.9.9
+unique: 2, opcode: INIT (26), nodeid: 0, insize: 56, pid: 0
+INIT: 7.33
+flags=0x13fffffb
+max_readahead=0x00020000
+   INIT: 7.19
+   flags=0x00000000
+   max_readahead=0x00020000
+   max_write=0x00020000
+   max_background=0
+   congestion_threshold=0
+   unique: 2, success, outsize: 40
+unique: 4, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 314
+Problem occurs: Wrong file type in readdir 
+   unique: 4, error: -2 (No such file or directory), outsize: 16
+unique: 6, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 314
+Problem occurs: Wrong file type in readdir 
+   unique: 6, error: -2 (No such file or directory), outsize: 16
+unique: 8, opcode: LOOKUP (1), nodeid: 1, insize: 54, pid: 314
+Problem occurs: Wrong file type in readdir 
+   unique: 8, error: -2 (No such file or directory), outsize: 16
+unique: 10, opcode: LOOKUP (1), nodeid: 1, insize: 54, pid: 314
+Problem occurs: Wrong file type in readdir 
+   unique: 10, error: -2 (No such file or directory), outsize: 16
+unique: 12, opcode: LOOKUP (1), nodeid: 1, insize: 51, pid: 314
+Problem occurs: Wrong file type in readdir 
+   unique: 12, error: -2 (No such file or directory), outsize: 16
+unique: 14, opcode: LOOKUP (1), nodeid: 1, insize: 51, pid: 314
+Problem occurs: Wrong file type in readdir 
+   unique: 14, error: -2 (No such file or directory), outsize: 16
+unique: 16, opcode: LOOKUP (1), nodeid: 1, insize: 52, pid: 314
+Problem occurs: Wrong file type in readdir 
+   unique: 16, error: -2 (No such file or directory), outsize: 16
+unique: 18, opcode: LOOKUP (1), nodeid: 1, insize: 52, pid: 314
+Problem occurs: Wrong file type in readdir 
+   unique: 18, error: -2 (No such file or directory), outsize: 16
+unique: 20, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 315
+Problem occurs: Wrong file type in readdir 
+   unique: 20, error: -2 (No such file or directory), outsize: 16
+unique: 22, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 315
+Problem occurs: Wrong file type in readdir 
+   unique: 22, error: -2 (No such file or directory), outsize: 16
+unique: 24, opcode: SYMLINK (6), nodeid: 1, insize: 57, pid: 315
+Problem occurs: Wrong file type in readdir 
+Problem occurs: lookup fails in symlink 
+   unique: 24, error: -2 (No such file or directory), outsize: 16
+unique: 26, opcode: LOOKUP (1), nodeid: 1, insize: 48, pid: 340
+Problem occurs: Wrong file type in readdir 
+   unique: 26, error: -2 (No such file or directory), outsize: 16
+unique: 28, opcode: CREATE (35), nodeid: 1, insize: 64, pid: 340
+Problem occurs: Wrong file type in readdir 
+Problem occurs: lookup fails in create 
+   unique: 28, error: -2 (No such file or directory), outsize: 16
+unique: 30, opcode: LOOKUP (1), nodeid: 1, insize: 48, pid: 340
+Problem occurs: Wrong file type in readdir 
+   unique: 30, error: -2 (No such file or directory), outsize: 16
+unique: 32, opcode: CREATE (35), nodeid: 1, insize: 64, pid: 340
+Problem occurs: Wrong file type in readdir 
+Problem occurs: lookup fails in create 
+   unique: 32, error: -2 (No such file or directory), outsize: 16
+unique: 34, opcode: LOOKUP (1), nodeid: 1, insize: 48, pid: 341
+Problem occurs: Wrong file type in readdir 
+   unique: 34, error: -2 (No such file or directory), outsize: 16
+unique: 36, opcode: OPENDIR (27), nodeid: 1, insize: 48, pid: 363
+   unique: 36, success, outsize: 32
+unique: 38, opcode: GETATTR (3), nodeid: 1, insize: 56, pid: 363
+isfile: 1 is a dir
+getattr 0000000000000001 0
+isfile: 1 is a dir
+   unique: 38, success, outsize: 120
+unique: 40, opcode: RELEASEDIR (29), nodeid: 1, insize: 64, pid: 0
+   unique: 40, success, outsize: 16
+fuse: failed to unmount /home/stu/cse-lab/chfs2: Invalid argument

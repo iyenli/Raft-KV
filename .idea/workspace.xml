@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="60aeb658-2b80-432d-801b-1ba9c3939dda" name="更改" comment="">
+      <change afterPath="$PROJECT_DIR$/chfs_client" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/chfs_client.d" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/chfs_client.o" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/chfs_client1.log" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/extent_client.d" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/extent_client.o" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/extent_server.d" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/extent_server.o" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/foo.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fuse.d" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fuse.o" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/inode_manager.d" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/inode_manager.o" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tmprand" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chfs_client.cc" beforeDir="false" afterPath="$PROJECT_DIR$/chfs_client.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chfs_client.h" beforeDir="false" afterPath="$PROJECT_DIR$/chfs_client.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/extent_client.cc" beforeDir="false" afterPath="$PROJECT_DIR$/extent_client.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/extent_client.h" beforeDir="false" afterPath="$PROJECT_DIR$/extent_client.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/extent_protocol.h" beforeDir="false" afterPath="$PROJECT_DIR$/extent_protocol.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fuse.cc" beforeDir="false" afterPath="$PROJECT_DIR$/fuse.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inode_manager.cc" beforeDir="false" afterPath="$PROJECT_DIR$/inode_manager.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inode_manager.h" beforeDir="false" afterPath="$PROJECT_DIR$/inode_manager.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-lab2-part1-d.sh" beforeDir="false" afterPath="$PROJECT_DIR$/test-lab2-part1-d.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-lab2-part1-e.sh" beforeDir="false" afterPath="$PROJECT_DIR$/test-lab2-part1-e.sh" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/mr_worker.cc" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/chfs_client.cc" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/extent_client.cc" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/mr_sequential.cc" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/extent_client.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/chfs_client.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/fuse.cc" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/mr_protocol.h" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="MakefileLocalSettings">
+    <option name="projectSyncType">
+      <map>
+        <entry key="$PROJECT_DIR$" value="RE_IMPORT" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectId" id="1zUk7qwj6oRotdIiQZxM5dAzPxx" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="RunOnceActivity.cidr.known.project.marker" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="cf.first.check.clang-format" value="false" />
+    <property name="cidr.known.project.marker" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="默认任务">
+      <changelist id="60aeb658-2b80-432d-801b-1ba9c3939dda" name="更改" comment="" />
+      <created>1634209889593</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1634209889593</updated>
+      <workItem from="1634209891948" duration="653000" />
+      <workItem from="1634213998169" duration="675000" />
+      <workItem from="1634643834668" duration="1119000" />
+      <workItem from="1634649247614" duration="4035000" />
+      <workItem from="1634714909842" duration="1280000" />
+      <workItem from="1634730426812" duration="1637000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
