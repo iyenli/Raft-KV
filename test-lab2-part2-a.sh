@@ -6,11 +6,12 @@
 ###########################################
 
 DIR=$1
-
+echo "123"
 cp ./novels/*.txt $DIR
-
+echo "456"
 # generate the wc output
 ./mr_sequential $DIR/*.txt > $DIR/mr-out-0 || exit
+echo "789"
 sort $DIR/mr-out-0 > $DIR/mr-wc
 rm -f $DIR/mr-out*
 
