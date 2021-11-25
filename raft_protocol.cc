@@ -39,24 +39,27 @@ unmarshall &operator>>(unmarshall &m, append_entries_reply &reply) {
 
 marshall &operator<<(marshall &m, const install_snapshot_args &args) {
     // Your code here
-    
+    m << args.leader_id << args.leader_term << args.last_included_index <<
+      << args.last_included_term << args.done << args.offset << args.data;
     return m;
 }
 
 unmarshall &operator>>(unmarshall &u, install_snapshot_args &args) {
     // Your code here
 
+    u >> args.leader_id >> args.leader_term >> args.last_included_index
+      >> args.last_included_term >> args.done >> args.offset >> args.data;
     return u;
 }
 
 marshall &operator<<(marshall &m, const install_snapshot_reply &reply) {
     // Your code here
-
+    m << reply.reply_term;
     return m;
 }
 
 unmarshall &operator>>(unmarshall &u, install_snapshot_reply &reply) {
     // Your code here
-
+    u >> reply.reply_term;
     return u;
 }

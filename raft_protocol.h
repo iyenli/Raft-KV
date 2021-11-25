@@ -125,6 +125,14 @@ unmarshall &operator>>(unmarshall &m, append_entries_reply &reply);
 class install_snapshot_args {
 public:
     // Your code here
+    int leader_term;
+    int leader_id;
+    int last_included_index;
+    int last_included_term;
+    int offset;
+
+    std::vector<char> data;
+    bool done;
 };
 
 marshall &operator<<(marshall &m, const install_snapshot_args &args);
@@ -135,6 +143,7 @@ unmarshall &operator>>(unmarshall &m, install_snapshot_args &args);
 class install_snapshot_reply {
 public:
     // Your code here
+    int reply_term;
 };
 
 marshall &operator<<(marshall &m, const install_snapshot_reply &reply);
