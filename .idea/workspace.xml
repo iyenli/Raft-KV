@@ -11,8 +11,14 @@
   <component name="ChangeListManager">
     <list default="true" id="60aeb658-2b80-432d-801b-1ba9c3939dda" name="更改" comment="更改">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raft.h" beforeDir="false" afterPath="$PROJECT_DIR$/raft.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/raft_protocol.cc" beforeDir="false" afterPath="$PROJECT_DIR$/raft_protocol.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/raft_protocol.h" beforeDir="false" afterPath="$PROJECT_DIR$/raft_protocol.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raft_protocol.o" beforeDir="false" afterPath="$PROJECT_DIR$/raft_protocol.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raft_state_machine.h" beforeDir="false" afterPath="$PROJECT_DIR$/raft_state_machine.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raft_storage.h" beforeDir="false" afterPath="$PROJECT_DIR$/raft_storage.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raft_test" beforeDir="false" afterPath="$PROJECT_DIR$/raft_test" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raft_test.o" beforeDir="false" afterPath="$PROJECT_DIR$/raft_test.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raft_test_utils.o" beforeDir="false" afterPath="$PROJECT_DIR$/raft_test_utils.o" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -136,7 +142,7 @@
       <workItem from="1637668153358" duration="14626000" />
       <workItem from="1637726715582" duration="11237000" />
       <workItem from="1637753535304" duration="18221000" />
-      <workItem from="1637829805930" duration="3485000" />
+      <workItem from="1637829805930" duration="8252000" />
     </task>
     <servers />
   </component>

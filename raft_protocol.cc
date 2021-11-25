@@ -39,7 +39,7 @@ unmarshall &operator>>(unmarshall &m, append_entries_reply &reply) {
 
 marshall &operator<<(marshall &m, const install_snapshot_args &args) {
     // Your code here
-    m << args.leader_id << args.leader_term << args.last_included_index <<
+    m << args.leader_id << args.leader_term << args.last_included_index
       << args.last_included_term << args.done << args.offset << args.data;
     return m;
 }

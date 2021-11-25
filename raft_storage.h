@@ -39,6 +39,8 @@ private:
     std::string meta_file_name;
     std::string log_file_name;
     std::string log_meta_file_name;
+    std::string snapshot_file_name;
+    std::string snapshot_meta_file_name;
 
     bool need_recovery;
     int log_meta_size;
@@ -57,6 +59,8 @@ raft_storage<command>::raft_storage(const std::string &dir) {
     meta_file_name = dir + "/meta.rft";
     log_file_name = dir + "/log.rft";
     log_meta_file_name = dir + "/log_meta.rft";
+    snapshot_file_name = dir + "/snapshot.rft";
+    snapshot_meta_file_name = dir + "/snapshot_meta.rft";
 
     // iff need recovery, meta file must exist
     need_recovery = (access(meta_file_name.c_str(), F_OK) != -1);

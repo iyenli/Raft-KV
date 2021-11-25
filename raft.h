@@ -118,6 +118,10 @@ private:
     std::chrono::milliseconds::rep last_rpc_time;
     std::chrono::milliseconds::rep last_ping_time;
 
+    // snapshot part
+    int last_included_index;
+    std::vector<char> snapshot_data;
+
 private:
     // Added: static threshold
     std::chrono::milliseconds ping_timeout;
@@ -145,6 +149,9 @@ private:
     void
     handle_install_snapshot_reply(int target, const install_snapshot_args &arg, const install_snapshot_reply &reply);
 
+    int logic2fact(const int &idx);
+
+    int fact2logic(const int &idx);
 
 private:
     bool is_stopped();
@@ -201,6 +208,7 @@ raft<state_machine, command>::raft(rpcs *server, std::vector<rpcc *> clients, in
     voted_for = -1;
     last_applied = 1; // Different from paper: NEXT should be applied
     commit_index = 0; // Same to paper, commit to where
+    last_included_index = 0; // last snapshot idx
     ping_timeout = (std::chrono::milliseconds(150));
 
     // A huge change, from now on, start from 1 to n!!
@@ -210,11 +218,6 @@ raft<state_machine, command>::raft(rpcs *server, std::vector<rpcc *> clients, in
     log.push_back(init_cmd);
 
     storage->recovery(current_term, voted_for, log);
-    int log_size = static_cast<int>(log.size());
-    RAFT_LOG("Recovering Raft, log size: %d, current term: %d, vote for: %d", log_size, current_term, voted_for);
-    for (int i = 1; i < log_size; ++i) {
-        RAFT_LOG("Recovering log item, term: %d", log[i].term);
-    }
 }
 
 template<typename state_machine, typename command>
@@ -301,6 +304,7 @@ bool raft<state_machine, command>::new_command(command cmd, int &term, int &inde
 template<typename state_machine, typename command>
 bool raft<state_machine, command>::save_snapshot() {
     // Your code here:
+
     return true;
 }
 
@@ -415,7 +419,6 @@ int raft<state_machine, command>::append_entries(append_entries_args<command> ar
         voted_for = -1;
         role = follower;
         while (!storage->update(current_term, voted_for, log)) {}
-        RAFT_LOG("Term update to %d", current_term);
     } // first update leader or mine
     else if (arg.leader_term < current_term) {
         goto fail_return;
@@ -466,7 +469,7 @@ int raft<state_machine, command>::append_entries(append_entries_args<command> ar
             assert(0);
         }
         log.push_back(arg.entries[append_start]);
-        assert(((int)log.size() == idx + 1));
+        assert(((int) log.size() == idx + 1));
         RAFT_LOG("Append success, my id: %d, log size: %d, term: %d", my_id, (int) log.size(),
                  arg.entries[append_start].term);
     }
@@ -553,6 +556,20 @@ int raft<state_machine, command>::install_snapshot(install_snapshot_args args, i
     // Your code here:
     mtx.lock();
     set_now(last_rpc_time);
+    reply.reply_term = current_term;
+
+    if (args.leader_term > current_term) {
+        voted_for = -1;
+        role = follower;
+        current_term = args.leader_term;
+        while (!storage->update(current_term, voted_for, log)) {}
+    }
+    if (args.leader_term < current_term || role == leader
+        || args.last_included_index <= last_included_index) {
+        return 0;
+    }
+
+
     mtx.unlock();
     return 0;
 }
@@ -564,6 +581,14 @@ void raft<state_machine, command>::handle_install_snapshot_reply(int target, con
     // Your code here:
     mtx.lock();
     set_now(last_rpc_time);
+    if (reply.reply_term > current_term) {
+        voted_for = -1;
+        role = follower;
+        current_term = reply.reply_term;
+        while (!storage->update(current_term, voted_for, log)) {}
+    } else {
+        // what to do?
+    }
     mtx.unlock();
     return;
 }
@@ -833,6 +858,17 @@ void raft<state_machine, command>::start_new_election() {
     for (int i = 0; i < cluster_size; ++i) {
         thread_pool->addObjJob(this, &raft::send_request_vote, i, args);
     }
+}
+
+template<typename state_machine, typename command>
+int raft<state_machine, command>::logic2fact(const int &idx) {
+    return idx + last_included_index; // log[0].term == last_included_term
+}
+
+template<typename state_machine, typename command>
+int raft<state_machine, command>::fact2logic(const int &idx) {
+    assert(idx >= last_included_index);
+    return idx - last_included_index; // log[0].term == last_included_term
 }
 
 #endif // raft_h
