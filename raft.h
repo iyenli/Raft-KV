@@ -330,11 +330,10 @@ int raft<state_machine, command>::request_vote(request_vote_args args, request_v
         // seen a larger term, convert to follower
         // and update term id
         // persist first
-        int vote_init = -1;
-        while (!storage->update_meta(vote_init, args.current_term)) {}
         role = follower;
         current_term = args.current_term;
         voted_for = -1;
+        while (!storage->update(current_term, voted_for, log)) {}
         RAFT_LOG("Term update to %d", current_term);
         goto check_index;
     }
@@ -342,9 +341,9 @@ int raft<state_machine, command>::request_vote(request_vote_args args, request_v
     check_index:
     if (log.size() == 1 || args.last_log_term > log.back().term ||
         (args.last_log_term == log.back().term && args.last_log_index >= static_cast<int>(log.size() - 1))) {
-        while(!storage->update_vote(args.candidate_id)) {}
         reply.vote_granted = true;
         voted_for = args.candidate_id;
+        while (!storage->update(current_term, voted_for, log)) {}
         set_now(last_rpc_time);
         mtx.unlock();
         return 0;
@@ -366,10 +365,9 @@ void raft<state_machine, command>::handle_request_vote_reply(int target, const r
     // Your code here:
     mtx.lock();
     if (reply.follower_term > current_term) {
-        int vote_init = -1;
-        while (!storage->update_meta(vote_init, reply.follower_term)) {}
         current_term = reply.follower_term;
         voted_for = -1;
+        while (!storage->update(current_term, voted_for, log)) {}
         RAFT_LOG("Term update to %d", current_term);
         role = follower;
     }
@@ -413,11 +411,10 @@ int raft<state_machine, command>::append_entries(append_entries_args<command> ar
     int new_size = arg.entries.size();
 
     if (arg.leader_term > current_term) {
-        int vote_init = -1;
-        while (!storage->update_meta(vote_init, arg.leader_term)) {}
         current_term = arg.leader_term;
         voted_for = -1;
         role = follower;
+        while (!storage->update(current_term, voted_for, log)) {}
         RAFT_LOG("Term update to %d", current_term);
     } // first update leader or mine
     else if (arg.leader_term < current_term) {
@@ -451,10 +448,10 @@ int raft<state_machine, command>::append_entries(append_entries_args<command> ar
         int idx = arg.prev_log_index + 1 + i;
         if (last_index >= idx) {
             if (get_log_entry(idx).term != arg.entries[i].term) {
-                while (!storage->truncate_log(std::move(idx - 1))) {}
                 RAFT_LOG("TRUNCATE HAPPENS. Cut conflict, origin: %d, current: %d", last_index, idx);
                 log.resize(idx);
                 last_index = log.size() - 1;
+                while (!storage->update(current_term, voted_for, log)) {}
                 break;
             }
         } else {
@@ -468,12 +465,12 @@ int raft<state_machine, command>::append_entries(append_entries_args<command> ar
         if (last_index >= idx) {
             assert(0);
         }
-        while(!storage->append_log(idx - 1, arg.entries[append_start])) {}
         log.push_back(arg.entries[append_start]);
         assert(((int)log.size() == idx + 1));
         RAFT_LOG("Append success, my id: %d, log size: %d, term: %d", my_id, (int) log.size(),
                  arg.entries[append_start].term);
     }
+    while (!storage->update(current_term, voted_for, log)) {}
     // if leader commit id is larger:
     if (arg.leader_commit_index > commit_index) {
         commit_index = std::min(arg.leader_commit_index, static_cast<int>(log.size() - 1));
@@ -502,11 +499,9 @@ void raft<state_machine, command>::handle_append_entries_reply(int target, const
     mtx.lock();
     if (role == leader) { // In any case, we turn to follower when meeting larger term
         if (reply.reply_term > current_term) {
-            int vote_init = -1;
-            while (!storage->update_meta(vote_init, reply.reply_term)) {}
-
             current_term = reply.reply_term;
             voted_for = -1;
+            while (!storage->update(current_term, voted_for, log)) {}
             RAFT_LOG("LOSE POWER. Term update to %d", current_term);
             role = follower;
         } else { // only care about real entry appending
@@ -796,8 +791,8 @@ int raft<state_machine, command>::add_to_log(command &command_) {
     ent.term = (current_term);
     ent.cmd = (command_);
 
-    while (!storage->append_log((int)(log.size() - 1), ent)) {} // tricky here
     log.push_back(ent);
+    while (!storage->update(current_term, voted_for, log)) {}
     RAFT_LOG("Append success, my id: %d, log size: %d, term: %d", my_id, (int) log.size(), ent.term);
     return log.size() - 1;
 }
@@ -826,13 +821,12 @@ log_entry<command> raft<state_machine, command>::get_log_entry(int index) {
  */
 template<typename state_machine, typename command>
 void raft<state_machine, command>::start_new_election() {
-    while (!storage->update_meta(my_id, std::move(current_term + 1))) {}
     ++current_term;
     voted_for = my_id;
     role = candidate;
     voter_for_self.clear();
     voter_for_self.insert(my_id);
-
+    while (!storage->update(current_term, voted_for, log)) {}
     // produce vote args and send out
     request_vote_args args = get_voter_args();
     int cluster_size = rpc_clients.size();

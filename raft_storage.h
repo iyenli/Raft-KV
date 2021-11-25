@@ -21,6 +21,8 @@ public:
 
     bool append_log(const int &idx, const log_entry<command> &log);
 
+    bool update(const int &term, const int &vote_for, const std::vector <log_entry<command>> &log);
+
     bool truncate_log(const int &idx);
 
     bool update_term(const int &term);
@@ -42,8 +44,6 @@ private:
     int log_meta_size;
 
     std::vector <std::pair<int, int>> meta_log;
-
-    std::string readAll(const std::fstream &);
 
     void write_int(std::fstream &, const int &);
 
@@ -86,11 +86,13 @@ void raft_storage<command>::recovery(int &current_term, int &vote_for,
         return;
     }
     mtx.lock();
-    if(logs.size() != 1){ // keep bid
-        printf("Error, A not-qualified logs vector input, size: %d", (int)logs.size());
-        logs.clear();
+    if (logs.size() != 1) { // keep bid
+        printf("Error, A not-qualified logs vector input, size: %d", (int) logs.size());
         log_entry<command> ent;
+
         ent.term = -1;
+        logs.clear();
+        logs.push_back(ent);
     }
 
     // Open All persistent file
@@ -135,13 +137,52 @@ void raft_storage<command>::recovery(int &current_term, int &vote_for,
 }
 
 template<typename command>
-std::string raft_storage<command>::readAll(const std::fstream &f) {
-    std::istreambuf_iterator<char> begin(f);
-    std::istreambuf_iterator<char> end;
-    std::string ret(begin, end);
-    return ret;
+bool raft_storage<command>::update(const int &term, const int &vote_for, const std::vector <log_entry<command>> &log) {
+    mtx.lock();
+    std::fstream meta_file(meta_file_name, std::fstream::binary | std::fstream::trunc | std::fstream::out);
+    std::fstream log_file(log_file_name, std::fstream::binary | std::fstream::trunc | std::fstream::out);
+    std::fstream log_meta_file(log_meta_file_name, std::fstream::binary | std::fstream::trunc | std::fstream::out);
+
+    write_int(meta_file, vote_for);
+    write_int(meta_file, term);
+
+    meta_log.clear();
+    int log_term, data_size, n = log.size();
+    assert(n >= 1);
+    for (int i = 1; i < n; ++i) {
+        log_term = log[i].term;
+        data_size = ((raft_command *) (&(log[i].cmd)))->size();
+        char *s = new char[data_size];
+        ((raft_command *) (&(log[i].cmd)))->serialize(s, data_size);
+
+        write_int(log_meta_file, log_term);
+        write_int(log_meta_file, data_size);
+
+        log_file.write(s, data_size);
+        meta_log.push_back(std::make_pair(log_term, data_size));
+    }
+
+    log_meta_file.close();
+    meta_file.close();
+    log_file.close();
+    mtx.unlock();
+    return true;
 }
 
+template<typename command>
+void raft_storage<command>::read_int(std::fstream &f, int &a) {
+    int tmp;
+    f.read((char *) (&tmp), sizeof(int));
+    a = tmp;
+}
+
+template<typename command>
+void raft_storage<command>::write_int(std::fstream &f, const int &a) {
+    f.write((char *) (&a), sizeof(int));
+}
+
+
+// Disable efficient but buggy code!
 /**
  *
  * @tparam command
@@ -173,10 +214,9 @@ bool raft_storage<command>::truncate_log(const int &idx) {
 template<typename command>
 bool raft_storage<command>::append_log(const int &idx, const log_entry<command> &log) {
     mtx.lock(); // keep bio!
-    if((int)meta_log.size() > idx && meta_log[idx].first == log.term){
+    if ((int) meta_log.size() > idx && meta_log[idx].first == log.term) {
         return true; // done
-    }
-    else if((int)meta_log.size() > idx){
+    } else if ((int) meta_log.size() > idx) {
         meta_log.resize(idx);
     }
     std::fstream log_file;
@@ -249,7 +289,6 @@ bool raft_storage<command>::update_meta(const int &vote_for, const int &term) {
     return true;
 }
 
-
 template<typename command>
 void raft_storage<command>::truncate_file_directly(int idx) {
     // a more inefficient version
@@ -302,16 +341,6 @@ void raft_storage<command>::truncate_file_directly(int idx) {
     log_meta_file.close();
     log_file.close();
     // inefficient method stops here
-}
-
-template<typename command>
-void raft_storage<command>::read_int(std::fstream &f, int &a) {
-    f.read((char *) (&a), sizeof(int));
-}
-
-template<typename command>
-void raft_storage<command>::write_int(std::fstream &f, const int &a) {
-    f.write((char *) (&a), sizeof(int));
 }
 
 
