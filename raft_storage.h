@@ -19,13 +19,17 @@ public:
     // Your code here
     void recovery(int &current_term, int &vote_for, std::vector <log_entry<command>> &logs);
 
-    bool append_log(const std::vector <log_entry<command>> &log);
+    bool append_log(const int &idx, const log_entry<command> &log);
 
     bool truncate_log(const int &idx);
 
     bool update_term(const int &term);
 
     bool update_vote(const int &vote_for);
+
+    bool update_meta(const int &vote_for, const int &term);
+
+    void truncate_file_directly(int idx);
 
 private:
     std::mutex mtx;
@@ -40,6 +44,10 @@ private:
     std::vector <std::pair<int, int>> meta_log;
 
     std::string readAll(const std::fstream &);
+
+    void write_int(std::fstream &, const int &);
+
+    void read_int(std::fstream &, int &);
 };
 
 template<typename command>
@@ -53,6 +61,15 @@ raft_storage<command>::raft_storage(const std::string &dir) {
     // iff need recovery, meta file must exist
     need_recovery = (access(meta_file_name.c_str(), F_OK) != -1);
     log_meta_size = static_cast<int>(sizeof(int) + sizeof(int));
+
+    // init meta
+    if (!need_recovery) {
+        std::fstream meta_file;
+        meta_file.open(meta_file_name, std::fstream::binary | std::fstream::out);
+        int vote_for_init = -1, term_init = 0;
+        write_int(meta_file, vote_for_init);
+        write_int(meta_file, term_init);
+    }
     mtx.unlock();
 }
 
@@ -63,32 +80,43 @@ raft_storage<command>::~raft_storage() {
 }
 
 template<typename command>
-void raft_storage<command>::recovery(int &current_term, int &vote_for, std::vector <log_entry<command>> &logs) {
+void raft_storage<command>::recovery(int &current_term, int &vote_for,
+                                     std::vector <log_entry<command>> &logs) {
     if (!need_recovery) {
         return;
     }
-
     mtx.lock();
+    if(logs.size() != 1){ // keep bid
+        printf("Error, A not-qualified logs vector input, size: %d", (int)logs.size());
+        logs.clear();
+        log_entry<command> ent;
+        ent.term = -1;
+    }
+
     // Open All persistent file
     std::fstream meta_file;
     std::fstream log_file;
     std::fstream log_meta_file;
 
-    meta_file.open(meta_file_name, std::fstream::binary | std::fstream::in);
-    log_file.open(log_file_name, std::fstream::in);
+    meta_file.open(meta_file_name, std::fstream::binary | std::fstream::in | std::fstream::out);
+    log_file.open(log_file_name, std::fstream::in | std::fstream::binary);
     log_meta_file.open(log_meta_file_name, std::fstream::binary | std::fstream::in);
 
     // move cursor to correct place
-    log_file.seekg(0, std::ios::beg);
-    meta_file.seekg(0, std::ios::beg);
-    log_meta_file.seekg(0, std::ios::beg);
+    log_file.seekg(0, std::fstream::beg);
+    meta_file.seekg(0, std::fstream::beg);
+    log_meta_file.seekg(0, std::fstream::beg);
 
-    meta_file >> vote_for >> current_term;
+    read_int(meta_file, vote_for);
+    read_int(meta_file, current_term);
 
     int term, data_size;
+    meta_log.clear(); // keep bid
     while (!log_meta_file.eof()) {
-        log_meta_file >> term >> data_size;
+        read_int(log_meta_file, term);
+        read_int(log_meta_file, data_size);
         meta_log.push_back(std::make_pair(term, data_size));
+//        printf("Read log here, data size = %d \n", static_cast<int>(data_size));
 
         char *s = new char[data_size];
         log_file.read(s, data_size);
@@ -96,7 +124,7 @@ void raft_storage<command>::recovery(int &current_term, int &vote_for, std::vect
         // produce log entry and push back
         log_entry<command> tmp;
         tmp.term = term;
-        ((raft_command) tmp.cmd).deserialize(s, data_size);
+        ((raft_command *) (&tmp.cmd))->deserialize(s, data_size);
         logs.push_back(tmp);
     }
 
@@ -114,63 +142,6 @@ std::string raft_storage<command>::readAll(const std::fstream &f) {
     return ret;
 }
 
-template<typename command>
-bool raft_storage<command>::append_log(const std::vector <log_entry<command>> &log) {
-    mtx.lock();
-    std::fstream log_file;
-    std::fstream log_meta_file;
-    log_file.open(log_file_name, std::fstream::app | std::fstream::out);
-    log_meta_file.open(log_meta_file_name, std::fstream::app | std::fstream::binary | std::fstream::out);
-
-    int term, data_size, entries_num = log.size();
-    for (int i = 0; i < entries_num; ++i) {
-        term = log[i].term;
-        auto cmd = log[i].cmd;
-        data_size = ((raft_command)cmd).size();
-        char *s = new char[data_size];
-
-        ((raft_command)cmd).serialize(s, data_size);
-        log_meta_file << term << data_size;
-        log_file.write(s, data_size);
-
-        meta_log.push_back(std::make_pair(term, data_size));
-    }
-    log_meta_file.close();
-    log_file.close();
-
-    mtx.unlock();
-    return true;
-}
-
-
-template<typename command>
-bool raft_storage<command>::update_vote(const int &vote_for) {
-    std::ifstream ifs(meta_file_name, std::ifstream::binary);
-    int current_term, vote_for_tmp;
-    ifs >> vote_for_tmp >> current_term;
-    ifs.close();
-
-    // truncate and overwrite
-    std::ofstream ofs(meta_file_name, std::ofstream::binary | std::ofstream::trunc);
-    ofs << vote_for << current_term;
-    ofs.close();
-    return true;
-}
-
-template<typename command>
-bool raft_storage<command>::update_term(const int &term) {
-    std::ifstream ifs(meta_file_name, std::ifstream::binary);
-    int current_term, vote_for;
-    ifs >> vote_for >> current_term;
-    ifs.close();
-
-    // truncate and overwrite
-    std::ofstream ofs(meta_file_name, std::ofstream::binary | std::ofstream::trunc);
-    ofs << vote_for << term;
-    ofs.close();
-    return true;
-}
-
 /**
  *
  * @tparam command
@@ -183,13 +154,164 @@ bool raft_storage<command>::truncate_log(const int &idx) {
     // if input index of n, I'll truncate to 0 - (n - 1)
     int new_log_size = 0, new_meta_size = log_meta_size * idx;
     int n = std::min(idx, static_cast<int>(meta_log.size()));
-    for(int i = 0; i < n; ++i){
+    for (int i = 0; i < n; ++i) {
         new_log_size += meta_log[i].second;
     }
 
+    printf("Execute Truncate, meta size = %d, size = %d, log size = %d\n",
+           new_meta_size, idx, new_log_size);
+
     truncate(log_file_name.c_str(), new_log_size);
     truncate(log_meta_file_name.c_str(), new_meta_size);
+    if (idx > static_cast<int>(meta_log.size())) {
+        meta_log.resize(idx);
+    }
+
     return true;
+}
+
+template<typename command>
+bool raft_storage<command>::append_log(const int &idx, const log_entry<command> &log) {
+    mtx.lock(); // keep bio!
+    if((int)meta_log.size() > idx && meta_log[idx].first == log.term){
+        return true; // done
+    }
+    else if((int)meta_log.size() > idx){
+        meta_log.resize(idx);
+    }
+    std::fstream log_file;
+    std::fstream log_meta_file;
+
+    log_file.open(log_file_name, std::fstream::ate | std::fstream::out | std::fstream::binary);
+    log_meta_file.open(log_meta_file_name, std::fstream::ate | std::fstream::binary | std::fstream::out);
+
+    int term, data_size;
+    term = log.term;
+    auto cmd = log.cmd;
+    data_size = ((raft_command *) (&cmd))->size();
+    char *s = new char[data_size];
+
+    ((raft_command *) (&cmd))->serialize(s, data_size);
+    write_int(log_meta_file, term);
+    write_int(log_meta_file, data_size);
+
+//    printf("Write log here, data size = %d \n", static_cast<int>(data_size));
+    log_file.write(s, data_size);
+
+    meta_log.push_back(std::make_pair(term, data_size));
+
+    log_meta_file.close();
+    log_file.close();
+
+    mtx.unlock();
+    return true;
+}
+
+
+template<typename command>
+bool raft_storage<command>::update_vote(const int &vote_for) {
+    std::fstream meta_file(meta_file_name, std::fstream::binary | std::fstream::in);
+    int current_term, vote_for_tmp;
+    read_int(meta_file, vote_for_tmp);
+    read_int(meta_file, current_term);
+    meta_file.close();
+
+    // truncate and overwrite
+    meta_file.open(meta_file_name, std::fstream::binary | std::fstream::trunc | std::fstream::out);
+    write_int(meta_file, vote_for);
+    write_int(meta_file, current_term);
+    meta_file.close();
+    return true;
+}
+
+template<typename command>
+bool raft_storage<command>::update_term(const int &term) {
+    std::fstream meta_file(meta_file_name, std::fstream::binary | std::fstream::in);
+    int current_term, vote_for_tmp;
+    read_int(meta_file, vote_for_tmp);
+    read_int(meta_file, current_term);
+    meta_file.close();
+
+    // truncate and overwrite
+    meta_file.open(meta_file_name, std::fstream::binary | std::fstream::trunc | std::fstream::out);
+    write_int(meta_file, vote_for_tmp);
+    write_int(meta_file, term);
+    meta_file.close();
+    return true;
+}
+
+template<typename command>
+bool raft_storage<command>::update_meta(const int &vote_for, const int &term) {
+    std::fstream meta_file(meta_file_name, std::fstream::binary | std::fstream::trunc | std::fstream::out);
+    write_int(meta_file, vote_for);
+    write_int(meta_file, term);
+    meta_file.close();
+    return true;
+}
+
+
+template<typename command>
+void raft_storage<command>::truncate_file_directly(int idx) {
+    // a more inefficient version
+    std::fstream log_file;
+    std::fstream log_meta_file;
+
+    log_file.open(log_file_name, std::fstream::in | std::fstream::binary);
+    log_meta_file.open(log_meta_file_name, std::fstream::binary | std::fstream::in);
+
+    // move cursor to correct place
+    log_file.seekg(0, std::fstream::beg);
+    log_meta_file.seekg(0, std::fstream::beg);
+
+    int term, data_size;
+    std::vector <log_entry<command>> logs;
+
+    meta_log.clear();
+    while (!log_meta_file.eof()) {
+        read_int(log_meta_file, term);
+        read_int(log_meta_file, data_size);
+        meta_log.push_back(std::make_pair(term, data_size));
+
+        char *s = new char[data_size];
+        log_file.read(s, data_size);
+
+        // produce log entry and push back
+        log_entry<command> tmp;
+        tmp.term = term;
+        ((raft_command *) (&tmp.cmd))->deserialize(s, data_size);
+        logs.push_back(tmp);
+    }
+
+    log_meta_file.close();
+    log_file.close();
+
+    int n = std::min(idx, (int) logs.size());
+    log_file.open(log_file_name, std::fstream::out | std::fstream::binary | std::fstream::trunc);
+    log_meta_file.open(log_meta_file_name, std::fstream::binary | std::fstream::out | std::fstream::trunc);
+
+    for (int i = 0; i < n; ++i) {
+        write_int(log_meta_file, meta_log[i].first);
+        write_int(log_meta_file, meta_log[i].second);
+
+        auto cmd = logs[i].cmd;
+        data_size = ((raft_command *) (&cmd))->size();
+        char *s = new char[data_size];
+        ((raft_command *) (&cmd))->serialize(s, data_size);
+        log_file.write(s, data_size);
+    }
+    log_meta_file.close();
+    log_file.close();
+    // inefficient method stops here
+}
+
+template<typename command>
+void raft_storage<command>::read_int(std::fstream &f, int &a) {
+    f.read((char *) (&a), sizeof(int));
+}
+
+template<typename command>
+void raft_storage<command>::write_int(std::fstream &f, const int &a) {
+    f.write((char *) (&a), sizeof(int));
 }
 
 

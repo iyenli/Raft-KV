@@ -11,39 +11,10 @@
   <component name="ChangeListManager">
     <list default="true" id="60aeb658-2b80-432d-801b-1ba9c3939dda" name="更改" comment="更改">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chfs_client" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/chfs_client.d" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/chfs_client.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/extent_client.d" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/extent_client.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/extent_server" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/extent_server.d" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/extent_server.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/extent_smain.d" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/extent_smain.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/fuse.d" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/fuse.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/inode_manager.d" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/inode_manager.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mr_coordinator" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mr_coordinator.d" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mr_coordinator.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mr_sequential" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mr_sequential.d" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mr_sequential.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mr_worker" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mr_worker.d" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mr_worker.o" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/raft.h" beforeDir="false" afterPath="$PROJECT_DIR$/raft.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/raft_protocol.cc" beforeDir="false" afterPath="$PROJECT_DIR$/raft_protocol.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/raft_protocol.h" beforeDir="false" afterPath="$PROJECT_DIR$/raft_protocol.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/raft_storage.h" beforeDir="false" afterPath="$PROJECT_DIR$/raft_storage.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rpc/connection.o" beforeDir="false" afterPath="$PROJECT_DIR$/rpc/connection.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rpc/librpc.a" beforeDir="false" afterPath="$PROJECT_DIR$/rpc/librpc.a" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rpc/pollmgr.o" beforeDir="false" afterPath="$PROJECT_DIR$/rpc/pollmgr.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rpc/rpc.o" beforeDir="false" afterPath="$PROJECT_DIR$/rpc/rpc.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rpc/thr_pool.o" beforeDir="false" afterPath="$PROJECT_DIR$/rpc/thr_pool.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test-lab2-part1-g" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/raft_test" beforeDir="false" afterPath="$PROJECT_DIR$/raft_test" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raft_test.o" beforeDir="false" afterPath="$PROJECT_DIR$/raft_test.o" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,6 +36,7 @@
     </file-type-list>
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/raft_test.cc" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/raft_state_machine.cc" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/mr_worker.cc" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/raft.h" root0="FORCE_HIGHLIGHTING" />
@@ -93,6 +65,7 @@
     <setting file="file://$PROJECT_DIR$/grade.sh" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/extent_server.cc" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/raft_protocol.cc" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/raft_test_utils.h" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MakefileLocalSettings">
     <option name="projectSyncType">
@@ -164,7 +137,7 @@
       <workItem from="1637462564743" duration="36432000" />
       <workItem from="1637668153358" duration="14626000" />
       <workItem from="1637726715582" duration="11237000" />
-      <workItem from="1637753535304" duration="2049000" />
+      <workItem from="1637753535304" duration="18181000" />
     </task>
     <servers />
   </component>
