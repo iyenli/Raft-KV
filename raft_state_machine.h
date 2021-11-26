@@ -9,6 +9,8 @@
 #include <chrono>
 #include <atomic>
 #include <condition_variable>
+#include <unordered_map>
+#include <string.h>
 
 class raft_command {
 public:
@@ -73,6 +75,12 @@ public:
     virtual int size() const override;
     virtual void serialize(char* buf, int size) const override;
     virtual void deserialize(const char* buf, int size) override;
+
+    void set_command_type(int type);
+
+private:
+
+
 };
 
 marshall& operator<<(marshall &m, const kv_command& cmd);
@@ -89,6 +97,12 @@ public:
     virtual std::vector<char> snapshot() override;
     // Apply the snapshot to the state mahine.
     virtual void apply_snapshot(const std::vector<char>&) override;
+
+private:
+
+    std::unordered_map<std::string, std::string> mp;
+
+    std::mutex mtx;
 };
 
 #endif // raft_state_machine_h
