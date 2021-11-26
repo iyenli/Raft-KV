@@ -227,6 +227,7 @@ raft<state_machine, command>::raft(rpcs *server, std::vector<rpcc *> clients, in
         ((raft_state_machine *) state)->apply_snapshot(snapshot_data);
         RAFT_LOG("Recover from snap shot, term: %d, last index: %d", log[0].term, last_included_index);
     }
+
 }
 
 template<typename state_machine, typename command>
@@ -414,9 +415,10 @@ void raft<state_machine, command>::handle_request_vote_reply(int target, const r
             // I'm leader!!!
             RAFT_LOG("Successful become leader: %d", static_cast<int>(voter_for_self.size()));
             role = leader;
-            auto current_time = duration_cast<std::chrono::milliseconds>(
-                    system_clock::now().time_since_epoch()).count();
-            last_ping_time = (current_time - ping_timeout.count());
+//            auto current_time = duration_cast<std::chrono::milliseconds>(
+//                    system_clock::now().time_since_epoch()).count();
+//            last_ping_time = (current_time - ping_timeout.count());
+            set_now(last_ping_time);
             int index_size = logic2fact(log.size());
             next_index.resize(cluster_size, index_size);
             match_index.resize(cluster_size, 0);
@@ -719,7 +721,7 @@ void raft<state_machine, command>::run_background_election() {
             start_new_election();
             mtx.unlock();
         } else if (role == candidate &&
-                   (current_time - last_rpc_time) > (std::chrono::milliseconds((rand() % 600) + 1000)).count()) {
+                   (current_time - last_rpc_time) > (std::chrono::milliseconds((rand() % 1000) + 1000)).count()) {
             // candidate timeout
             mtx.lock();
             start_new_election();
@@ -782,6 +784,7 @@ void raft<state_machine, command>::run_background_commit() {
                     }
                     args.entries = commands;
                     thread_pool->addObjJob(this, &raft::send_append_entries, i, args);
+                    RAFT_LOG("RPC Happens, commit");
                 }
             }
             mtx.unlock();
@@ -832,6 +835,7 @@ void raft<state_machine, command>::run_background_ping() {
                     system_clock::now().time_since_epoch()).count();
             if ((current_time - last_ping_time) > ping_timeout.count()) {
                 mtx.lock();
+                set_now(last_ping_time);
                 append_entries_args<command> args;
                 args.leader_term = current_term;
                 args.leader_id = my_id;
@@ -848,10 +852,11 @@ void raft<state_machine, command>::run_background_ping() {
                         args.prev_log_index = next_idx - 1;
                         args.prev_log_term = get_log_entry(next_idx - 1).term;
                     }
+                    RAFT_LOG("RPC Happens, Ping");
                     thread_pool->addObjJob(this, &raft::send_append_entries, i, args);
                 }
 
-                set_now(last_ping_time);
+
                 mtx.unlock();
             }
         }
@@ -944,6 +949,7 @@ void raft<state_machine, command>::start_new_election() {
     request_vote_args args = get_voter_args();
     int cluster_size = rpc_clients.size();
     for (int i = 0; i < cluster_size; ++i) {
+        RAFT_LOG("RPC Happens, ask for votes");
         thread_pool->addObjJob(this, &raft::send_request_vote, i, args);
     }
 }

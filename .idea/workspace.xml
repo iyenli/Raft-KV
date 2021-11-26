@@ -12,9 +12,7 @@
     <list default="true" id="60aeb658-2b80-432d-801b-1ba9c3939dda" name="更改" comment="更改">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/raft.h" beforeDir="false" afterPath="$PROJECT_DIR$/raft.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/raft_protocol.o" beforeDir="false" afterPath="$PROJECT_DIR$/raft_protocol.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/raft_state_machine.cc" beforeDir="false" afterPath="$PROJECT_DIR$/raft_state_machine.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/raft_state_machine.h" beforeDir="false" afterPath="$PROJECT_DIR$/raft_state_machine.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/raft_state_machine.o" beforeDir="false" afterPath="$PROJECT_DIR$/raft_state_machine.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/raft_storage.h" beforeDir="false" afterPath="$PROJECT_DIR$/raft_storage.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_0/log.rft" beforeDir="false" afterPath="$PROJECT_DIR$/raft_temp/raft_storage_0/log.rft" afterDir="false" />
@@ -34,7 +32,6 @@
       <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_4/meta.rft" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/raft_test" beforeDir="false" afterPath="$PROJECT_DIR$/raft_test" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/raft_test.o" beforeDir="false" afterPath="$PROJECT_DIR$/raft_test.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/raft_test_utils.o" beforeDir="false" afterPath="$PROJECT_DIR$/raft_test_utils.o" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -159,7 +156,7 @@
       <workItem from="1637726715582" duration="11237000" />
       <workItem from="1637753535304" duration="18221000" />
       <workItem from="1637829805930" duration="37077000" />
-      <workItem from="1637917984719" duration="10623000" />
+      <workItem from="1637917984719" duration="13603000" />
     </task>
     <servers />
   </component>

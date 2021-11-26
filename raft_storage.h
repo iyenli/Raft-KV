@@ -177,7 +177,7 @@ void raft_storage<command>::recovery(int &current_term, int &vote_for,
 
     int term, data_size;
     meta_log.clear(); // keep bid
-    while (!log_meta_file.eof() && log_meta_file.good()) {
+    while (!log_meta_file.eof()) {
         read_int(log_meta_file, term);
         read_int(log_meta_file, data_size);
         meta_log.push_back(std::make_pair(term, data_size));
@@ -185,9 +185,9 @@ void raft_storage<command>::recovery(int &current_term, int &vote_for,
 
         char *s = new char[data_size];
         log_file.read(s, data_size);
-        if ((int) strlen(s) < data_size) {
-            break; // special case
-        }
+//        if ((int) strlen(s) < data_size) {
+//            break; // special case
+//        }
         // produce log entry and push back
         log_entry<command> tmp;
         tmp.term = term;

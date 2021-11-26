@@ -81,59 +81,63 @@ int kv_command::size() const {
     if (cmd_tp == CMD_NONE) {
         return 0;
     }
-    int ret = static_cast<int>(3 + get_num_len(key.size()) + get_num_len(value.size())
-                               + key.size() + value.size());
+    int ret = static_cast<int>(3 * sizeof(int) + key.size() + value.size());
     return ret;
-
 }
 
 
-void kv_command::serialize(char *buf_, int size) const {
+void kv_command::serialize(char *buf, int size) const {
     // Your code here:
     if (size != this->size() || cmd_tp == CMD_NONE) {
         return;
     }
 
-    char *buf = buf_;
-    *(buf++) = (char) ((int) cmd_tp + '0');
-    put_num(buf, key.size());
-    buf += get_num_len(key.size());
-    *(buf++) = 'x';
-    put_num(buf, value.size());
-    buf += get_num_len(value.size());
-    *(buf++) = 'x';
-
-    memcpy(buf, key.c_str(), key.size());
-    memcpy(buf + key.size(), value.c_str(), value.size());
-    if (cmd_tp != 0)
-        printf("serialize: key: %s, value: %s, cmd: %d \n", key.c_str(), value.c_str(), (int) cmd_tp);
+    int cursor = 0;
+    put_int_num((buf + cursor), (int)cmd_tp);
+    cursor += sizeof(int);
+    put_int_num((buf + cursor), key.size());
+    cursor += sizeof(int);
+    put_int_num((buf + cursor), value.size());
+    cursor += sizeof(int);
+    memcpy((buf + cursor), key.c_str(), key.size());
+    cursor += key.size();
+    memcpy((buf + cursor), value.c_str(), value.size());
+    cursor += value.size();
+    assert(cursor == size);
     return;
 }
 
 void kv_command::deserialize(const char *buf, int size) {
     // Your code here:
     if (size == 0) {
-        assert(0);
         return;
     }
-    size_t key_size, value_size;
-    cmd_tp = (command_type) (*(buf) - '0');
-    get_num(buf + 1, key_size);
-    get_num(buf + 2 + get_num_len(key_size), value_size);
+    int key_size, value_size;
 
-    if (*(buf + 2 + get_num_len(key_size) + get_num_len(value_size)) != 'x'
-        || *(buf + 1 + get_num_len(key_size)) != 'x') {
-        printf("Wrong deserialize!");
-        assert(0);
-    }
+    int cursor = 0, cmd_int_tp = 0;
+    get_int_num((buf + cursor), cmd_int_tp);
+    cmd_tp = (command_type)cmd_int_tp;
+    cursor += sizeof(int);
+    get_int_num((buf + cursor), key_size);
+    cursor += sizeof(int);
+    get_int_num((buf + cursor), value_size);
+    cursor += sizeof(int);
 
     char *key_array = new char[key_size], *value_array = new char[value_size];
-    memcpy(key_array, (buf + 3 + get_num_len(key_size) + get_num_len(value_size)), key_size);
-    memcpy(value_array, ((buf + 3 + get_num_len(key_size) + get_num_len(value_size)) + key_size), value_size);
+    memcpy(key_array, (buf + cursor), key_size);
+    cursor += key_size;
+    memcpy(value_array, (buf + cursor), value_size);
+    cursor += value_size;
+
     key = key_size == 0 ? "" : std::string(key_array, key_size);
     value = value_size == 0 ? "" : std::string(value_array, value_size);
     delete[]key_array;
     delete[]value_array;
+
+//    assert(cursor == size);
+    if(size != cursor){
+        printf("What the fuck! %d, %d", size, cursor);
+    }
     return;
 }
 
@@ -158,9 +162,6 @@ unmarshall &operator>>(unmarshall &u, kv_command &cmd) {
 kv_state_machine::~kv_state_machine() {
 
 }
-
-
-
 
 
 std::vector<char> kv_state_machine::snapshot() {
@@ -204,7 +205,7 @@ void kv_state_machine::apply_snapshot(const std::vector<char> &snapshot) {
     int snapshot_size, cursor = 0;
     get_int_num(ptr + cursor, snapshot_size);
     cursor += sizeof(int);
-    for(int i = 0; i < snapshot_size; ++i){
+    for (int i = 0; i < snapshot_size; ++i) {
         int key_s, value_s;
         get_int_num((ptr + cursor), key_s);
         cursor += sizeof(int);
@@ -223,6 +224,7 @@ void kv_state_machine::apply_snapshot(const std::vector<char> &snapshot) {
     mtx.unlock();
     return;
 }
+
 void kv_state_machine::apply_log(raft_command &cmd) {
     kv_command &kv_cmd = dynamic_cast<kv_command &>(cmd);
     std::unique_lock <std::mutex> lock(kv_cmd.res->mtx);
