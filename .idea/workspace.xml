@@ -12,9 +12,6 @@
     <list default="true" id="60aeb658-2b80-432d-801b-1ba9c3939dda" name="更改" comment="更改">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/raft.h" beforeDir="false" afterPath="$PROJECT_DIR$/raft.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/raft_state_machine.cc" beforeDir="false" afterPath="$PROJECT_DIR$/raft_state_machine.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/raft_state_machine.o" beforeDir="false" afterPath="$PROJECT_DIR$/raft_state_machine.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/raft_storage.h" beforeDir="false" afterPath="$PROJECT_DIR$/raft_storage.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_0/log.rft" beforeDir="false" afterPath="$PROJECT_DIR$/raft_temp/raft_storage_0/log.rft" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_0/log_meta.rft" beforeDir="false" afterPath="$PROJECT_DIR$/raft_temp/raft_storage_0/log_meta.rft" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_0/meta.rft" beforeDir="false" afterPath="$PROJECT_DIR$/raft_temp/raft_storage_0/meta.rft" afterDir="false" />
@@ -24,14 +21,12 @@
       <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_2/log.rft" beforeDir="false" afterPath="$PROJECT_DIR$/raft_temp/raft_storage_2/log.rft" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_2/log_meta.rft" beforeDir="false" afterPath="$PROJECT_DIR$/raft_temp/raft_storage_2/log_meta.rft" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_2/meta.rft" beforeDir="false" afterPath="$PROJECT_DIR$/raft_temp/raft_storage_2/meta.rft" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_3/log.rft" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_3/log_meta.rft" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_3/meta.rft" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_4/log.rft" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_4/log_meta.rft" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_4/meta.rft" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/raft_test" beforeDir="false" afterPath="$PROJECT_DIR$/raft_test" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/raft_test.o" beforeDir="false" afterPath="$PROJECT_DIR$/raft_test.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_3/log.rft" beforeDir="false" afterPath="$PROJECT_DIR$/raft_temp/raft_storage_3/log.rft" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_3/log_meta.rft" beforeDir="false" afterPath="$PROJECT_DIR$/raft_temp/raft_storage_3/log_meta.rft" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_3/meta.rft" beforeDir="false" afterPath="$PROJECT_DIR$/raft_temp/raft_storage_3/meta.rft" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_4/log.rft" beforeDir="false" afterPath="$PROJECT_DIR$/raft_temp/raft_storage_4/log.rft" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_4/log_meta.rft" beforeDir="false" afterPath="$PROJECT_DIR$/raft_temp/raft_storage_4/log_meta.rft" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_4/meta.rft" beforeDir="false" afterPath="$PROJECT_DIR$/raft_temp/raft_storage_4/meta.rft" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -104,21 +99,21 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="cf.first.check.clang-format" value="false" />
     <property name="cidr.known.project.marker" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/GNUmakefile" />
+    <property name="last_opened_file_path" value="$USER_HOME$/compilers-2021" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
   </component>
   <component name="RunManager" selected="Makefile 目标.raft">
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+    <configuration name="raft_test" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="part2" REDIRECT_INPUT="false" ELEVATE="true" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" RUN_PATH="$PROJECT_DIR$/raft_test" EXPLICIT_BUILD_TARGET_NAME="all">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="raft_test" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="part2" REDIRECT_INPUT="false" ELEVATE="true" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" RUN_PATH="$PROJECT_DIR$/raft_test" EXPLICIT_BUILD_TARGET_NAME="all">
+    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <configuration name="raft" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile">
@@ -156,7 +151,8 @@
       <workItem from="1637726715582" duration="11237000" />
       <workItem from="1637753535304" duration="18221000" />
       <workItem from="1637829805930" duration="37077000" />
-      <workItem from="1637917984719" duration="13603000" />
+      <workItem from="1637917984719" duration="14532000" />
+      <workItem from="1637935695675" duration="33000" />
     </task>
     <servers />
   </component>

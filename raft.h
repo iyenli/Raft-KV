@@ -784,7 +784,6 @@ void raft<state_machine, command>::run_background_commit() {
                     }
                     args.entries = commands;
                     thread_pool->addObjJob(this, &raft::send_append_entries, i, args);
-                    RAFT_LOG("RPC Happens, commit");
                 }
             }
             mtx.unlock();
