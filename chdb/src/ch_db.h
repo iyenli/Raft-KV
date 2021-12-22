@@ -62,8 +62,18 @@ public:
             const chdb_protocol::operation_var &var,
             int &r);
 
+    int execute_commit(const chdb_protocol::commit_var &var, int &r);
+
+    int execute_prepare(const chdb_protocol::prepare_var &var, int &r);
+
+    int execute_check(const chdb_protocol::check_prepare_state_var &var, int &r);
+
+    int execute_abort(const chdb_protocol::rollback_var &var, int &r);
+
 
     ~view_server();
+
+    std::mutex mtx;
 
 };
 

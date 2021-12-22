@@ -1,6 +1,13 @@
 #include "rpc.h"
 #include "raft_state_machine.h"
-
+#include <mutex>
+#include <string>
+#include <atomic>
+#include <memory>
+#include <vector>
+#include <chrono>
+#include <condition_variable>
+#include <unordered_map>
 
 class chdb_command : public raft_command {
 public:
@@ -29,11 +36,9 @@ public:
 
     virtual ~chdb_command() {}
 
-
     int key, value, tx_id;
     command_type cmd_tp;
-    std::shared_ptr<result> res;
-
+    std::shared_ptr <result> res;
 
     virtual int size() const override {
         return sizeof(*this);
@@ -42,6 +47,10 @@ public:
     virtual void serialize(char *buf, int size) const override;
 
     virtual void deserialize(const char *buf, int size);
+
+    void set_command_type(int type) {
+        this->cmd_tp = command_type(type);
+    }
 };
 
 marshall &operator<<(marshall &m, const chdb_command &cmd);
@@ -65,4 +74,11 @@ public:
     // Apply the snapshot to the state mahine.
     // In Chdb, you don't need to implement this function
     virtual void apply_snapshot(const std::vector<char> &) {}
+
+private:
+
+    std::unordered_map<int, std::vector<std::pair < chdb_command::command_type, std::vector < int>>>>
+    mp;
+
+    std::mutex mtx;
 };

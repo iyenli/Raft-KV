@@ -225,7 +225,7 @@ raft<state_machine, command>::raft(rpcs *server, std::vector<rpcc *> clients, in
         last_applied = last_included_index + 1;
         while (!storage->update(current_term, voted_for, log)) {}
         ((raft_state_machine *) state)->apply_snapshot(snapshot_data);
-        RAFT_LOG("Recover from snap shot, term: %d, last index: %d", log[0].term, last_included_index);
+//        RAFT_LOG("Recover from snap shot, term: %d, last index: %d", log[0].term, last_included_index);
     }
 
 }
@@ -278,7 +278,7 @@ template<typename state_machine, typename command>
 void raft<state_machine, command>::start() {
     // Your code here:
 
-    RAFT_LOG("start a new node, my id is %d", my_id);
+//    RAFT_LOG("start a new node, my id is %d", my_id);
     this->background_election = new std::thread(&raft::run_background_election, this);
     this->background_ping = new std::thread(&raft::run_background_ping, this);
     this->background_commit = new std::thread(&raft::run_background_commit, this);
@@ -305,7 +305,6 @@ bool raft<state_machine, command>::new_command(command cmd, int &term, int &inde
 
     term = current_term;
     index = add_to_log(cmd);
-    RAFT_LOG("I'm leader, I have %d logs, commit id: %d", (int) log.size(), commit_index);
 
     mtx.unlock();
     return true;
@@ -319,8 +318,8 @@ bool raft<state_machine, command>::save_snapshot() {
     int snapshot_end_log = std::min(last_applied, commit_index);
     if (snapshot_end_log <= last_included_index) {
         // maybe recovered yet and wait for commit id and applied id recover
-        RAFT_LOG("Snap shot, ready install to %d, already install to %d",
-                 snapshot_end_log, last_included_index);
+//        RAFT_LOG("Snap shot, ready install to %d, already install to %d",
+//                 snapshot_end_log, last_included_index);
         goto success_return;
     }
 
@@ -332,8 +331,8 @@ bool raft<state_machine, command>::save_snapshot() {
     last_included_index = snapshot_end_log;
     while (!storage->install_snapshot(last_included_index, log, snapshot_data)) {}
     while (!storage->update(current_term, voted_for, log)) {}
-    RAFT_LOG("Snap shot, install to %d, already install to %d, term: %d",
-             snapshot_end_log, last_included_index, log[0].term);
+//    RAFT_LOG("Snap shot, install to %d, already install to %d, term: %d",
+//             snapshot_end_log, last_included_index, log[0].term);
 
     success_return:
     mtx.unlock();
@@ -370,7 +369,7 @@ int raft<state_machine, command>::request_vote(request_vote_args args, request_v
         current_term = args.current_term;
         voted_for = -1;
         while (!storage->update(current_term, voted_for, log)) {}
-        RAFT_LOG("Term update to %d", current_term);
+//        RAFT_LOG("Term update to %d", current_term);
         goto check_index;
     }
 
@@ -405,7 +404,7 @@ void raft<state_machine, command>::handle_request_vote_reply(int target, const r
         current_term = reply.follower_term;
         voted_for = -1;
         while (!storage->update(current_term, voted_for, log)) {}
-        RAFT_LOG("Term update to %d", current_term);
+//        RAFT_LOG("Term update to %d", current_term);
         role = follower;
     }
     if (role == candidate && reply.vote_granted) {
@@ -413,7 +412,7 @@ void raft<state_machine, command>::handle_request_vote_reply(int target, const r
         size_t cluster_size = rpc_clients.size();
         if (voter_for_self.size() * 2 > cluster_size) {
             // I'm leader!!!
-            RAFT_LOG("Successful become leader: %d", static_cast<int>(voter_for_self.size()));
+//            RAFT_LOG("Successful become leader: %d", static_cast<int>(voter_for_self.size()));
             role = leader;
 //            auto current_time = duration_cast<std::chrono::milliseconds>(
 //                    system_clock::now().time_since_epoch()).count();
@@ -469,8 +468,8 @@ int raft<state_machine, command>::append_entries(append_entries_args<command> ar
          get_log_entry(arg.prev_log_index).term == arg.prev_log_term)) {
         goto add2local;
     } else {
-        RAFT_LOG("Prev info not satisfied, prev log: index %d, term %d, current log size %d",
-                 arg.prev_log_index, arg.prev_log_term, last_index);
+//        RAFT_LOG("Prev info not satisfied, prev log: index %d, term %d, current log size %d",
+//                 arg.prev_log_index, arg.prev_log_term, last_index);
         goto fail_return;
     }
 
@@ -486,7 +485,7 @@ int raft<state_machine, command>::append_entries(append_entries_args<command> ar
         int idx = arg.prev_log_index + 1 + i;
         if (last_index >= idx && idx >= last_included_index) { // buggy here!
             if (get_log_entry(idx).term != arg.entries[i].term) {
-                RAFT_LOG("TRUNCATE HAPPENS. Cut conflict, origin: %d, current: %d", last_index, idx);
+//                RAFT_LOG("TRUNCATE HAPPENS. Cut conflict, origin: %d, current: %d", last_index, idx);
                 log.resize(fact2logic(idx));
                 last_index = logic2fact(log.size() - 1);
                 while (!storage->update(current_term, voted_for, log)) {}
@@ -538,7 +537,7 @@ void raft<state_machine, command>::handle_append_entries_reply(int target, const
             current_term = reply.reply_term;
             voted_for = -1;
             while (!storage->update(current_term, voted_for, log)) {}
-            RAFT_LOG("LOSE POWER. Term update to %d", current_term);
+//            RAFT_LOG("LOSE POWER. Term update to %d", current_term);
             role = follower;
         } else { // only care about real entry appending
             if (reply.success) { // appending successfully
@@ -564,7 +563,7 @@ void raft<state_machine, command>::handle_append_entries_reply(int target, const
                             }
                         }
                         if (votes * 2 > cluster_size) {
-                            RAFT_LOG("New commit id, id: %d", match_to);
+//                            RAFT_LOG("New commit id, id: %d", match_to);
                             commit_index = match_to;
                         }
                     }
@@ -574,7 +573,7 @@ void raft<state_machine, command>::handle_append_entries_reply(int target, const
                 next_index[target]--;
                 assert(next_index[target] >= 1);
             } else {
-                RAFT_LOG("Initialized but still fail，Please Pay attention");
+//                RAFT_LOG("Initialized but still fail，Please Pay attention");
                 next_index[target]--;
             }
         }
@@ -601,14 +600,14 @@ int raft<state_machine, command>::install_snapshot(install_snapshot_args args, i
         || args.last_included_index <= last_included_index) {
         goto direct_return;
     }
-    RAFT_LOG("Snapshot received! idx: %d", args.last_included_index);
+//    RAFT_LOG("Snapshot received! idx: %d", args.last_included_index);
     // follower receive snapshot never received
     snapshot_data = args.data;
 
     // truncate
     if (fact2logic(args.last_included_index) < (int) (log.size()) && log.size() > 1 &&
         get_log_entry(args.last_included_index).term == args.last_included_term) {
-        RAFT_LOG("Cut part of log, idx: %d", args.last_included_index);
+//        RAFT_LOG("Cut part of log, idx: %d", args.last_included_index);
         log.erase(log.begin() + 1, log.begin() + fact2logic(args.last_included_index) + 1);
         if (last_applied < args.last_included_index || commit_index < args.last_included_index) {
             RAFT_LOG("Weird! Why snapshot come first than commit id?");
@@ -619,7 +618,7 @@ int raft<state_machine, command>::install_snapshot(install_snapshot_args args, i
         goto save_return;
     } else {
         // discard!
-        RAFT_LOG("Discard all to install");
+//        RAFT_LOG("Discard all to install");
         log.resize(1);
         commit_index = args.last_included_index;
         last_applied = args.last_included_index + 1;
@@ -632,7 +631,7 @@ int raft<state_machine, command>::install_snapshot(install_snapshot_args args, i
     save_return:
     last_included_index = args.last_included_index;
     log[0].term = args.last_included_term;
-    RAFT_LOG("Recover from snap shot, term: %d, last index: %d", log[0].term, last_included_index);
+//    RAFT_LOG("Recover from snap shot, term: %d, last index: %d", log[0].term, last_included_index);
     while (!storage->install_snapshot(last_included_index, log, snapshot_data)) {}
     while (!storage->update(current_term, voted_for, log)) {}
 
@@ -807,12 +806,12 @@ void raft<state_machine, command>::run_background_apply() {
         // Your code here:
         mtx.lock();
         if (commit_index >= logic2fact(static_cast<int>(log.size()))) {
-            RAFT_LOG("Error: commit id = %d, log size = %d", commit_index, (int) log.size());
+//            RAFT_LOG("Error: commit id = %d, log size = %d", commit_index, (int) log.size());
             assert(0);
         }
         for (; last_applied <= commit_index; ++last_applied) {
             auto ent = get_log_entry(last_applied); // BUGGY here
-            RAFT_LOG("Commit id = %d, applied id = %d", commit_index, last_applied);
+//            RAFT_LOG("Commit id = %d, applied id = %d", commit_index, last_applied);
             ((raft_state_machine *) state)->apply_log(ent.cmd);
         }
         mtx.unlock();
@@ -851,7 +850,7 @@ void raft<state_machine, command>::run_background_ping() {
                         args.prev_log_index = next_idx - 1;
                         args.prev_log_term = get_log_entry(next_idx - 1).term;
                     }
-                    RAFT_LOG("RPC Happens, Ping");
+//                    RAFT_LOG("RPC Happens, Ping");
                     thread_pool->addObjJob(this, &raft::send_append_entries, i, args);
                 }
 
@@ -924,7 +923,7 @@ log_entry<command> raft<state_machine, command>::get_log_entry(int index) {
     int logic = fact2logic(index);
 
     if (!((logic >= 0 && logic < (int) log.size()))) {
-        RAFT_LOG("Error: get %d", logic);
+//        RAFT_LOG("Error: get %d", logic);
         assert(0);
     }
 
@@ -948,7 +947,7 @@ void raft<state_machine, command>::start_new_election() {
     request_vote_args args = get_voter_args();
     int cluster_size = rpc_clients.size();
     for (int i = 0; i < cluster_size; ++i) {
-        RAFT_LOG("RPC Happens, ask for votes");
+//        RAFT_LOG("RPC Happens, ask for votes");
         thread_pool->addObjJob(this, &raft::send_request_vote, i, args);
     }
 }
@@ -961,7 +960,7 @@ int raft<state_machine, command>::logic2fact(const int &idx) {
 template<typename state_machine, typename command>
 int raft<state_machine, command>::fact2logic(const int &idx) {
     if (idx < last_included_index) {
-        RAFT_LOG("fact to logic, desired %d, last include %d", idx, last_included_index);
+//        RAFT_LOG("fact to logic, desired %d, last include %d", idx, last_included_index);
         assert(0);
     }
 

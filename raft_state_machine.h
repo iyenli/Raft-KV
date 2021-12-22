@@ -95,6 +95,7 @@ public:
 
     // Generate a snapshot of the current state.
     virtual std::vector<char> snapshot() override;
+
     // Apply the snapshot to the state mahine.
     virtual void apply_snapshot(const std::vector<char>&) override;
 

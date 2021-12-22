@@ -88,4 +88,6 @@ public:
     int primary_replica = 0;
     int replica_num = 5;
 
+    std::map<int, std::vector<chdb_protocol::operation_var>> wal;
+
 };
