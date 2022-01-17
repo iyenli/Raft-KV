@@ -6,39 +6,47 @@
 #include "extent_client.h"
 #include <vector>
 
-
-class chfs_client {
+class chfs_client
+{
     extent_client *ec;
-public:
 
+public:
     typedef unsigned long long inum;
-    enum xxstatus {
-        OK, RPCERR, NOENT, IOERR, EXIST
+    enum xxstatus
+    {
+        OK,
+        RPCERR,
+        NOENT,
+        IOERR,
+        EXIST
     };
     typedef int status;
 
-    struct fileinfo {
+    struct fileinfo
+    {
         unsigned long long size;
         unsigned long atime;
         unsigned long mtime;
         unsigned long ctime;
     };
 
-    struct dirinfo {
+    struct dirinfo
+    {
         unsigned long atime;
         unsigned long mtime;
         unsigned long ctime;
     };
-    struct dirent {
+    struct dirent
+    {
         std::string name;
         chfs_client::inum inum;
     };
 
-    struct real_dirent_in_blocks {
+    struct real_dirent_in_blocks
+    {
         char name[256];
         chfs_client::inum inum;
         size_t file_name_length;
-
     };
 
 private:
@@ -49,7 +57,7 @@ private:
     void setEntry(const char *, inum, real_dirent_in_blocks &);
 
 public:
-    chfs_client();
+    chfs_client(std::string);
 
     chfs_client(std::string, std::string);
 
@@ -67,7 +75,7 @@ public:
 
     int create(inum, const char *, mode_t, inum &);
 
-    int readdir(inum, std::list <dirent> &);
+    int readdir(inum, std::list<dirent> &);
 
     int write(inum, size_t, off64_t, const char *, size_t &);
 
