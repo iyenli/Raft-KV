@@ -10,74 +10,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="60aeb658-2b80-432d-801b-1ba9c3939dda" name="更改" comment="更改">
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vscode/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/.vscode/settings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GNUmakefile" beforeDir="false" afterPath="$PROJECT_DIR$/GNUmakefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chfs_client" beforeDir="false" afterPath="$PROJECT_DIR$/chfs_client" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chfs_client.cc" beforeDir="false" afterPath="$PROJECT_DIR$/chfs_client.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chfs_client.h" beforeDir="false" afterPath="$PROJECT_DIR$/chfs_client.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chfs_client1.log" beforeDir="false" afterPath="$PROJECT_DIR$/chfs_client1.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chfs_client2.log" beforeDir="false" afterPath="$PROJECT_DIR$/chfs_client2.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo_client.cc" beforeDir="false" afterPath="$PROJECT_DIR$/demo_client.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo_protocol.h" beforeDir="false" afterPath="$PROJECT_DIR$/demo_protocol.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo_server.cc" beforeDir="false" afterPath="$PROJECT_DIR$/demo_server.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/extent_client.cc" beforeDir="false" afterPath="$PROJECT_DIR$/extent_client.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/extent_client.h" beforeDir="false" afterPath="$PROJECT_DIR$/extent_client.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/extent_client.o" beforeDir="false" afterPath="$PROJECT_DIR$/extent_client.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/extent_protocol.h" beforeDir="false" afterPath="$PROJECT_DIR$/extent_protocol.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/extent_server.cc" beforeDir="false" afterPath="$PROJECT_DIR$/extent_server.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/extent_server.h" beforeDir="false" afterPath="$PROJECT_DIR$/extent_server.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/extent_server.log" beforeDir="false" afterPath="$PROJECT_DIR$/extent_server.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/extent_smain.cc" beforeDir="false" afterPath="$PROJECT_DIR$/extent_smain.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/foo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/foo.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fuse.cc" beforeDir="false" afterPath="$PROJECT_DIR$/fuse.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gettime.cc" beforeDir="false" afterPath="$PROJECT_DIR$/gettime.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gettime.h" beforeDir="false" afterPath="$PROJECT_DIR$/gettime.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inode_manager.cc" beforeDir="false" afterPath="$PROJECT_DIR$/inode_manager.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inode_manager.h" beforeDir="false" afterPath="$PROJECT_DIR$/inode_manager.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lang/algorithm.h" beforeDir="false" afterPath="$PROJECT_DIR$/lang/algorithm.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lang/verify.h" beforeDir="false" afterPath="$PROJECT_DIR$/lang/verify.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mr-wc-all" beforeDir="false" afterPath="$PROJECT_DIR$/mr-wc-all" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mr_coordinator" beforeDir="false" afterPath="$PROJECT_DIR$/mr_coordinator" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mr_coordinator.cc" beforeDir="false" afterPath="$PROJECT_DIR$/mr_coordinator.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mr_coordinator.o" beforeDir="false" afterPath="$PROJECT_DIR$/mr_coordinator.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mr_protocol.h" beforeDir="false" afterPath="$PROJECT_DIR$/mr_protocol.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mr_sequential" beforeDir="false" afterPath="$PROJECT_DIR$/mr_sequential" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mr_sequential.cc" beforeDir="false" afterPath="$PROJECT_DIR$/mr_sequential.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mr_sequential.o" beforeDir="false" afterPath="$PROJECT_DIR$/mr_sequential.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mr_worker" beforeDir="false" afterPath="$PROJECT_DIR$/mr_worker" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mr_worker.cc" beforeDir="false" afterPath="$PROJECT_DIR$/mr_worker.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mr_worker.o" beforeDir="false" afterPath="$PROJECT_DIR$/mr_worker.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/novels/being_ernest.txt" beforeDir="false" afterPath="$PROJECT_DIR$/novels/being_ernest.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/novels/dorian_gray.txt" beforeDir="false" afterPath="$PROJECT_DIR$/novels/dorian_gray.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/novels/frankenstein.txt" beforeDir="false" afterPath="$PROJECT_DIR$/novels/frankenstein.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/novels/metamorphosis.txt" beforeDir="false" afterPath="$PROJECT_DIR$/novels/metamorphosis.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/novels/mr-wc-correct" beforeDir="false" afterPath="$PROJECT_DIR$/novels/mr-wc-correct" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/novels/sherlock_holmes.txt" beforeDir="false" afterPath="$PROJECT_DIR$/novels/sherlock_holmes.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/novels/tom_sawyer.txt" beforeDir="false" afterPath="$PROJECT_DIR$/novels/tom_sawyer.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rpc/connection.cc" beforeDir="false" afterPath="$PROJECT_DIR$/rpc/connection.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rpc/connection.h" beforeDir="false" afterPath="$PROJECT_DIR$/rpc/connection.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rpc/fifo.h" beforeDir="false" afterPath="$PROJECT_DIR$/rpc/fifo.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rpc/gettime.cc" beforeDir="false" afterPath="$PROJECT_DIR$/rpc/gettime.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rpc/gettime.h" beforeDir="false" afterPath="$PROJECT_DIR$/rpc/gettime.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rpc/jsl_log.cc" beforeDir="false" afterPath="$PROJECT_DIR$/rpc/jsl_log.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rpc/jsl_log.h" beforeDir="false" afterPath="$PROJECT_DIR$/rpc/jsl_log.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rpc/marshall.h" beforeDir="false" afterPath="$PROJECT_DIR$/rpc/marshall.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rpc/method_thread.h" beforeDir="false" afterPath="$PROJECT_DIR$/rpc/method_thread.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rpc/pollmgr.cc" beforeDir="false" afterPath="$PROJECT_DIR$/rpc/pollmgr.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rpc/pollmgr.h" beforeDir="false" afterPath="$PROJECT_DIR$/rpc/pollmgr.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rpc/rpc.cc" beforeDir="false" afterPath="$PROJECT_DIR$/rpc/rpc.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rpc/rpc.h" beforeDir="false" afterPath="$PROJECT_DIR$/rpc/rpc.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rpc/rpctest.cc" beforeDir="false" afterPath="$PROJECT_DIR$/rpc/rpctest.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rpc/slock.h" beforeDir="false" afterPath="$PROJECT_DIR$/rpc/slock.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rpc/thr_pool.cc" beforeDir="false" afterPath="$PROJECT_DIR$/rpc/thr_pool.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rpc/thr_pool.h" beforeDir="false" afterPath="$PROJECT_DIR$/rpc/thr_pool.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test-lab2-part1-g.c" beforeDir="false" afterPath="$PROJECT_DIR$/test-lab2-part1-g.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test-lab2-part2-a.sh" beforeDir="false" afterPath="$PROJECT_DIR$/test-lab2-part2-a.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tmprand" beforeDir="false" afterPath="$PROJECT_DIR$/tmprand" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tprintf.h" beforeDir="false" afterPath="$PROJECT_DIR$/tprintf.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raft.h" beforeDir="false" afterPath="$PROJECT_DIR$/raft.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_0/log.rft" beforeDir="false" afterPath="$PROJECT_DIR$/raft_temp/raft_storage_0/log.rft" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_0/log_meta.rft" beforeDir="false" afterPath="$PROJECT_DIR$/raft_temp/raft_storage_0/log_meta.rft" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_0/meta.rft" beforeDir="false" afterPath="$PROJECT_DIR$/raft_temp/raft_storage_0/meta.rft" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_1/log.rft" beforeDir="false" afterPath="$PROJECT_DIR$/raft_temp/raft_storage_1/log.rft" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_1/log_meta.rft" beforeDir="false" afterPath="$PROJECT_DIR$/raft_temp/raft_storage_1/log_meta.rft" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_1/meta.rft" beforeDir="false" afterPath="$PROJECT_DIR$/raft_temp/raft_storage_1/meta.rft" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_2/log.rft" beforeDir="false" afterPath="$PROJECT_DIR$/raft_temp/raft_storage_2/log.rft" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_2/log_meta.rft" beforeDir="false" afterPath="$PROJECT_DIR$/raft_temp/raft_storage_2/log_meta.rft" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_2/meta.rft" beforeDir="false" afterPath="$PROJECT_DIR$/raft_temp/raft_storage_2/meta.rft" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_3/log.rft" beforeDir="false" afterPath="$PROJECT_DIR$/raft_temp/raft_storage_3/log.rft" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_3/log_meta.rft" beforeDir="false" afterPath="$PROJECT_DIR$/raft_temp/raft_storage_3/log_meta.rft" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_3/meta.rft" beforeDir="false" afterPath="$PROJECT_DIR$/raft_temp/raft_storage_3/meta.rft" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_4/log.rft" beforeDir="false" afterPath="$PROJECT_DIR$/raft_temp/raft_storage_4/log.rft" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_4/log_meta.rft" beforeDir="false" afterPath="$PROJECT_DIR$/raft_temp/raft_storage_4/log_meta.rft" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raft_temp/raft_storage_4/meta.rft" beforeDir="false" afterPath="$PROJECT_DIR$/raft_temp/raft_storage_4/meta.rft" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,25 +48,36 @@
     </file-type-list>
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/raft_test.cc" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/raft_state_machine.cc" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/mr_worker.cc" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/raft.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/test-lab2-part2-a.sh" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/extent_client.cc" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/mr_sequential.cc" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/chfs_client.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/mr_protocol.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/extent_smain.cc" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/extent_server.log" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/extent_server.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/chfs_client.cc" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/extent_protocol.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/demo_server.cc" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/rpc/rpc.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/grade.sh" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/extent_server.cc" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/test-lab2-part2-b.sh" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/demo_client.cc" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/demo_protocol.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/extent_client.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/fuse.cc" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/mr_protocol.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/rpc/thr_pool.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/raft_storage.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/chfs_client.cc" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/raft_protocol.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/mr_coordinator.cc" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/raft_state_machine.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/demo_server.cc" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/rpc/rpc.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/grade.sh" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/extent_server.cc" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/raft_protocol.cc" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/raft_test_utils.h" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MakefileLocalSettings">
     <option name="projectSyncType">
@@ -145,12 +105,27 @@
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
   </component>
-  <component name="RunManager">
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+  <component name="RunManager" selected="Makefile 目标.raft">
+    <configuration name="raft_test" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="part2" REDIRECT_INPUT="false" ELEVATE="true" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" RUN_PATH="$PROJECT_DIR$/raft_test" EXPLICIT_BUILD_TARGET_NAME="all">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
+    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="raft" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile">
+      <makefile filename="$PROJECT_DIR$/GNUmakefile" target="" workingDirectory="" arguments="">
+        <envs />
+      </makefile>
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="CMake 应用程序.raft_test" />
+      <item itemvalue="Makefile 目标.raft" />
+    </list>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -169,10 +144,31 @@
       <workItem from="1634779000106" duration="1000" />
       <workItem from="1634803609332" duration="26026000" />
       <workItem from="1634903963484" duration="2688000" />
+      <workItem from="1637370807401" duration="37062000" />
+      <workItem from="1637425298551" duration="1201000" />
+      <workItem from="1637462564743" duration="36432000" />
+      <workItem from="1637668153358" duration="14626000" />
+      <workItem from="1637726715582" duration="11237000" />
+      <workItem from="1637753535304" duration="18221000" />
+      <workItem from="1637829805930" duration="37077000" />
+      <workItem from="1637917984719" duration="14532000" />
+      <workItem from="1637935695675" duration="33000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
 </project>
