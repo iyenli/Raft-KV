@@ -84,7 +84,7 @@ public:
     int view_server_port;
     bool active;
     rpc_node *node;
-    std::vector<std::map<int, value_entry>> store;
+    std::vector <std::map<int, value_entry>> store;
     int primary_replica = 0;
     int replica_num = 5;
 

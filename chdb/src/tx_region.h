@@ -68,4 +68,18 @@ private:
 
     chdb *db;
     const int tx_id;
+
+#if PART3
+
+    std::vector<chdb_protocol::operation_var> logs;
+
+    void sendPutRPC(int key, int val, int &res, bool extra);
+
+    void sendGetRPC(int key, int &res);
+
+    void retry();
+
+    void release();
+
+#endif
 };

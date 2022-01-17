@@ -10,6 +10,7 @@
 /* Macro for lab4 */
 #define RAFT_GROUP 1            /* Use raft group for view server. Enable it in part2 */
 #define BIG_LOCK 0              /* Use big lock. Please disable it to pass the last 3 (bonus) testcases */
+#define PART3 1
 
 #include "../../raft_test_utils.h"
 
