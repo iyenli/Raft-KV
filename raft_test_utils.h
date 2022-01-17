@@ -128,9 +128,11 @@ public:
     // typedef raft<list_state_machine, list_command> raft<state_machine, command>;
 
     raft_group(int num, const char *storage_dir = "raft_temp");
+
     ~raft_group();
 
     int check_exact_one_leader();
+
     void check_no_leader();
 
     void set_reliable(bool value);
@@ -142,6 +144,7 @@ public:
     int check_same_term();
 
     int num_committed(int log_idx);
+
     int get_committed_value(int log_idx);
 
     int append_new_command(int value, int num_committed_server);
